@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>UI index</title>
+		<link rel="stylesheet" href="css/style.css">
+		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&family=Nunito:wght@300;400;700&family=Pacifico&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<div class="page-grid">
+			<header>
+				<div class="header-container">
+					<!-- Navigation Practice for Header nav -->
+					<h1 class="logo" ><a href="ui.html"><img src="assets/logo.png"></a></h1>
+					<nav>
+						<ul class="nav-left">
+							<li><a href="#">How it Works</a></li>
+							<li><a href="#">Insight</a></li>
+							
+							
+						</ul>
+						
+
+
+
+<div class="nav-right">
+
+  <!-- 👤 PROFILE -->
+  <div class="profile-container">
+
+    <img
+      id="profile-pic"
+      src="default-avatar.png"
+      class="profile-pic"
+      alt="Profile"
+    />
+
+    <!-- ✅ PROFILE DROPDOWN (INSIDE profile-container) -->
+    
+<div id="profile-dropdown" class="dropdown hidden">
+
+  <button id="upload-pic" class="dropdown-item">
+    Upload Picture 📷
+  </button>
+
+  <input type="file" id="profile-upload" accept="image/*" hidden />
+
+
+<button id="upload-caricature" class="dropdown-item">
+  Upload Caricature 🎨
+</button>
+
+<input type="file" id="caricature-upload" accept="image/*" hidden />
+
+
+  <!-- ✅ ADD THIS -->
+  
+<div class="dropdown-item theme-toggle-wrapper">
+
+  <span id="profile-theme-label">Dark Mode</span>
+
+  <label class="theme-switch">
+    <input type="checkbox" id="profile-theme-toggle" />
+    <span class="slider"></span>
+  </label>
+
+</div>
+
+
+  <button id="logout-btn" class="dropdown-item danger">
+    Logout 🚪
+  </button>
+
+</div>
+
+
+  </div>
+
+  <!-- ︙ MENU BUTTON -->
+  <button id="menu-btn" class="menu-icon">
+    &#8942;
+  </button>
+
+  <!-- ✅ MENU DROPDOWN (direct inside nav-right) -->
+  <div id="menu-dropdown" class="dropdown hidden">
+    <button class="dropdown-item">Settings ⚙️</button>
+    <button class="dropdown-item">Help ❓</button>
+  </div>
+
+</div>
+
+</nav>
+
+
+			</header>
+		
+		<main class="dashboard">
+			<aside class="dashboard-sidebar">
+				<h3>Dashboard</h3>	
+			
+   					<!-- ✅ TEAM LEAD SIDEBAR PANEL -->
+   					<div class="admin-card mt-40 hidden" id="register-employee-panel">
+
+						<div class="admin-card-header">
+							<h4>Team Lead Tools</h4>
+							<button
+								class="toggle-btn"
+								id="toggleRegisterPanel"
+								aria-label="Toggle Register Employee"
+							>
+								+
+							</button>
+						</div>
+						<div class="admin-card-body" id="register-body">
+							<h5>Register New Employee</h5>
+
+							<!-- Existing register form goes here -->
+							<div class="form-group">
+								<label for="new-name">Full Name</label>
+								<input type="text" id="new-name" placeholder="Employee Name" />
+							</div>
+							<div class="form-group">
+								<label for="new-email">Email</label>
+								<input type="email" id="new-email" placeholder="employee@company.com" />
+							</div>
+
+<div class="form-group">
+  <label for="new-password">Password</label>
+  <input type="password" id="new-password" placeholder="Enter password" />
+</div>
+
+							<button
+								type="button"
+								class="nav-btn btn-primary w-100"
+								id="registerEmployee"
+							>
+								Register
+							</button>
+							<p id="register-preview" class="text-muted mt-10"></p>
+						</div>
+					</div>	
+
+
+<ul id="employee-menu" class="mt-20">
+  
+<li>
+
+<button class="menu-btn" data-section="dashboard">
+  📊 Performance
+</button>
+
+</li>
+
+  <li><button class="menu-btn" data-section="news">🆕 What's New</button></li>
+  <li><button class="menu-btn" data-section="reminder">⚠️ Reminder</button></li>
+  <li><button class="menu-btn" data-section="achievement">🏆 Achievements</button></li>
+  <li><button class="menu-btn" data-section="leave">🌴 Leave</button></li>
+
+
+  <li><button class="menu-btn" data-section="feedback">💬 Suggestions</button></li>
+</ul>
+			
+
+
+			</aside>
+
+
+			<section class="dashboard-content">
+				<h2 id="welcome"></h2>
+				<p class="text-muted fw-bold" id="role-badge"></p>
+
+
+
+<!-- 👑 GOD MODE PANEL -->
+<div id="admin-panel" class="hidden mt-40">
+
+  <h3>Password Reset Requests</h3>
+
+  <div id="password-requests"></div>
+
+</div>
+
+
+
+				
+<!-- ✅ SHARED PERFORMANCE GRAPH -->
+<div id="performance-chart-section" class="stat-card mt-40 hidden">
+
+
+<!-- ✅ TAB HEADER -->
+<div class="chart-tabs">
+  <button class="tab-btn active" data-tab="agent">
+      Monthly Performance
+  </button>
+
+  <button class="tab-btn" data-tab="ytd">
+    Year to Date
+  </button>
+</div>
+
+  
+<div class="flex-between">
+  <h3 id="chart-title">Agent vs Team Performance</h3>
+
+  <div class="chart-toggle">
+    <button id="toggle-daily" class="nav-btn active">Daily</button>
+    <button id="toggle-monthly" class="nav-btn">Monthly</button>
+  </div>
+
+<div class="chart-toggle mt-10">
+  <button id="metric-qa" class="nav-btn active">QA</button>
+  <button id="metric-aht" class="nav-btn">AHT</button>
+  <button id="metric-att" class="nav-btn">Attendance</button>
+</div>
+
+</div>
+
+  <canvas id="performanceChart" height="120"></canvas>
+</div>
+
+
+
+				<!-- Employee View -->
+				<div id="employee-view" class="hidden">
+
+<!-- 🏆 RANKING SECTION -->
+<div id="ranking-section" class="ranking-container">
+
+  <!-- TOP EMPLOYEE -->
+  
+<div class="compare-row main-compare">
+
+  <!-- LEFT: YOU -->
+  <div class="compare-box left-box">
+    <h4>You</h4>
+    <p>QA: <span id="you-qa"></span></p>
+    <p>AHT: <span id="you-aht"></span></p>
+    <p>Att: <span id="you-att"></span></p>
+  </div>
+
+  <!-- CENTER: TOP AGENT IMAGE -->
+  <div class="compare-center">
+    <img id="rank-1-img" class="rank-img" />
+    <p id="rank-1-name"></p>
+  </div>
+
+  <!-- RIGHT: TOP AGENT -->
+  <div class="compare-box right-box">
+    <h4>Top Agent</h4>
+    <p>QA: <span id="top-qa"></span></p>
+    <p>AHT: <span id="top-aht"></span></p>
+    <p>Att: <span id="top-att"></span></p>
+  </div>
+
+
+
+</div>
+
+<div class="rank-grid">
+
+    <div class="rank-item">
+      <div id="rank-qa-img" class="rank-img-small"></div>
+      <p>Best QA</p>
+      <span id="rank-qa-name"></span>
+    </div>
+
+    <div class="rank-item">
+      <img src="default-avatar.png" id="rank-aht-img" class="rank-img-small"/>
+      <p>Best AHT</p>
+      <span id="rank-aht-name"></span>
+    </div>
+
+    <div class="rank-item">
+      <div id="rank-att-img" class="rank-img-small"></div>
+      <p>Best Attendance</p>
+      <span id="rank-att-name"></span>
+    </div>
+
+  </div>
+
+
+
+
+  </div>
+
+  <!-- LOWER GRID -->
+  
+
+
+<!-- 📢 BULLETIN BOARD -->
+<div id="bulletin-section" class="hidden">
+
+  <div class="stat-card mt-40">
+    <h3>📢 What's New</h3>
+
+    <div id="bulletin-list">
+      <div class="bulletin-item">
+        <p class="fw-bold">🎉 New Feature Released</p>
+        <p class="text-muted">You can now view your performance chart!</p>
+      </div>
+
+      <div class="bulletin-item">
+        <p class="fw-bold">⚠️ Reminder</p>
+        <p class="text-muted">Submit reports before Friday</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+
+				   <div id="section-dashboard" class="dashboard-section hidden">
+					<h3>Your Personal Stats</h3>
+					
+
+
+
+<div class="stats-grid">
+
+  <div class="stat-card">
+<select id="employee-qpb-month-select">
+</select>
+<p class="stat-label">💰 QPB Incentive</p>
+<div id="quarterly-incentives"></div>
+
+<p class="stat-value" id="employee-qpb">₱0</p>
+
+
+
+
+<p id="employee-qpb-grade">—</p>
+
+</div>
+
+  <div class="stat-card">
+    <p class="stat-label">QA</p>
+    <p class="stat-value" id="qa">—</p>
+
+    <div id="qa-sub-boxes-personal" class="qa-sub-grid hidden">
+      <div class="sub-box">
+        <p class="sub-label">Disability</p>
+        <p class="sub-value" id="qa-dis">—</p>
+      </div>
+
+      <div class="sub-box">
+        <p class="sub-label">Commercial</p>
+        <p class="sub-value" id="qa-com">—</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <p class="stat-label">AHT</p>
+    <p class="stat-value" id="aht">—</p>
+  </div>
+
+  <div class="stat-card">
+    <p class="stat-label">Attendance</p>
+    <p class="stat-value" id="attendance">—</p>
+  </div>
+
+</div>
+
+
+<!-- ✅ EMPLOYEE HISTORY (ADD THIS) -->
+<div id="employee-history" class="mt-40 hidden">
+  <h4>Performance History</h4>
+
+  <div class="stat-card">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>QA</th>
+          <th>AHT</th>
+          <th>Attendance</th>
+        </tr>
+      </thead>
+      <tbody id="employee-history-body"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<!-- ✅ WHAT'S NEW -->
+  <div id="section-news" class="dashboard-section hidden">
+    <h3>What's New</h3>
+    <p>🎉 New dashboard feature released</p>
+  </div>
+
+  <!-- ✅ REMINDER -->
+  <div id="section-reminder" class="dashboard-section hidden">
+    <h3>Important Reminder</h3>
+    <p>⚠️ Submit your reports before Friday</p>
+  </div>
+
+
+  <!-- ✅ ACHIEVEMENTS -->
+  <div id="section-achievement" class="dashboard-section hidden">
+    <h3>Achievements</h3>
+    <p>🏆 Top Performer this month</p>
+  </div>
+
+  
+  <!-- ✅ FEEDBACK -->
+  <div id="section-feedback" class="dashboard-section hidden">
+    <h3>Suggestions & Complaints</h3>
+    <textarea id="feedback-input" class="w-100"></textarea>
+    <button id="submit-feedback">Submit</button>
+    <ul id="feedback-list"></ul>
+  </div>
+
+<!-- ✅ Employee Performance History -->
+					
+
+				</div>
+
+</div>
+
+<div id="section-leave" class="dashboard-section hidden">
+
+  <h3>🌴 Vacation Leave</h3>
+
+  <!-- ✅ Month Switch -->
+  <select id="calendar-month" class="mt-10 styled-select"></select>
+
+  <!-- ✅ Calendar -->
+
+<div class="calendar-container mt-20">
+
+  <div class="calendar-header">
+    <div>Sunday</div>
+    <div>Monday</div>
+    <div>Tuesday</div>
+    <div>Wednesday</div>
+    <div>Thursday</div>
+    <div>Friday</div>
+    <div>Saturday</div>
+  </div>
+
+  <div id="calendar-grid" class="calendar-grid"></div>
+
+</div>
+
+
+</div>
+
+
+					
+					
+
+				
+				<!-- Team Lead View -->
+				<div id="lead-view" class="hidden">
+    					<h3>Team Performance</h3>
+
+    					<!-- ✅ TEAM STATS -->
+   					<div class="stat-card" id="team-qa-card">
+        <div class="stat-label">TEAM QA</div>
+        <div class="stat-value team-qa-value" id="team-qa-value">--</div>
+    </div>
+
+    <div class="stat-card" id="team-aht-card">
+        <div class="stat-label">TEAM AHT</div>
+        <div class="stat-value team-aht-value" id="team-aht-value">--</div>
+    </div>
+
+    <div class="stat-card" id="team-attendance-card">
+        <div class="stat-label">TEAM ATTENDANCE</div>
+        <div class="stat-value team-attendance-value" id="team-attendance-value">--</div>
+    </div>
+
+					
+    				</div>
+
+   				 <!-- ✅ SELECTED AGENT SECTION (NOW UNDER TEAM STATS) -->
+    				 
+				<div id="selected-agent-stats" class="hidden mt-40">
+  					<h3 id="selected-agent-title">Selected Agent Performance</h3>
+
+
+        				<div class="stats-grid">
+            					
+
+  <div class="stat-card">
+    <p class="stat-label">QA</p>
+    <p class="stat-value" id="selected-qa">—</p>
+
+    <div id="qa-sub-boxes" class="qa-sub-grid hidden">
+      <div class="sub-box">
+        <p class="sub-label">Disability</p>
+        <p class="sub-value" id="selected-qa-dis">—</p>
+      </div>
+
+      <div class="sub-box">
+        <p class="sub-label">Commercial</p>
+        <p class="sub-value" id="selected-qa-com">—</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <p class="stat-label">AHT</p>
+    <p class="stat-value" id="selected-aht">—</p>
+  </div>
+
+  <div class="stat-card">
+    <p class="stat-label">Attendance</p>
+    <p class="stat-value" id="selected-attendance">—</p>
+  </div>
+
+</div>
+            				
+        			<!-- ✅ HISTORY INSIDE SAME GROUP -->
+        			<div id="agent-history" class="mt-40 hidden">
+            				<h4>Performance History</h4>
+
+            				<div class="stat-card">
+                				<table class="history-table">
+                    					<thead>
+                        					<tr>
+                            						<th>Date</th>
+                            						<th>QA</th>
+                            						<th>AHT</th>
+                            						<th>Attendance</th>
+                        					</tr>
+                    					</thead>
+                    					<tbody id="history-body"></tbody>
+                				</table>
+            				</div>
+        			</div>
+    			</div>
+
+
+
+			
+<div class="tl-input-panel mt-40 hidden">
+
+  <hr class="mt-20">
+
+
+
+  <h3>Update Employee Stats</h3>
+
+  <!-- ✅ KEEP DROPDOWN OUTSIDE WRAPPER -->
+  <div class="form-group">
+    <label for="agent-select">Select Agent</label>
+    <select id="agent-select">
+      <option value="">-- Select an Agent --</option>
+    </select>
+    <small class="field-error"></small>
+  </div>
+
+  <!-- ✅ EVERYTHING ELSE GOES INSIDE HERE -->
+
+
+  <div id="tl-input-fields" class="hidden">
+
+<h3 class="mt-20">QPB History</h3>
+<table class="history-table" id="incentive-history-table">
+  <thead>
+<tr>
+  <th>Month</th>
+  <th>Grade</th>
+  <th>Amount</th>
+  <th>Action</th>
+</tr>
+
+  </thead>
+
+  <tbody id="incentive-history-body">
+  </tbody>
+</table>
+<div id="manual-qpb-panel">
+<h3>QPB Incentive</h3>
+
+
+
+<div class="chart-tabs">
+
+  <button
+    class="tab-btn active"
+    id="manual-qpb-tab"
+  >
+    Manual Entry
+  </button>
+
+  <button
+    class="tab-btn"
+    id="bulk-qpb-tab"
+  >
+    Free Flow
+  </button>
+
+</div>
+
+
+<div class="form-group">
+  <label for="incentive-month">
+    Month
+  </label>
+
+  <select id="incentive-month">
+    <option value="">Select Month</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="incentive-amount">
+    Incentive Amount (₱)
+  </label>
+
+  <input
+    type="number"
+    id="incentive-amount"
+    min="0"
+    placeholder="5000"
+  />
+</div>
+
+<select id="qpb-grade">
+  <option value="">Select Grade</option>
+  <option value="EA">EA</option>
+  <option value="AMORE">AMORE</option>
+  <option value="FA">FA</option>
+  <option value="AMOST">AMOST</option>
+</select>
+
+
+
+
+
+<center>
+  <div class="modal-actions">
+  <button
+    type="button"
+    class="nav-btn btn-primary"
+    id="save-incentive-btn"
+  >
+    Save Incentive
+  </button>
+
+  <button
+    type="button"
+    class="nav-btn btn-danger"
+    id="delete-incentive-btn"
+  >
+    Delete
+  </button>
+</div>
+</center>
+</div>
+
+
+<div
+  id="bulk-qpb-panel"
+  class="hidden"
+>
+
+ <textarea
+  id="bulk-qpb-input"
+  rows="8"
+  placeholder="June 5000 EA
+July 4500 AMORE
+August 3000 FA">
+</textarea>
+
+  <button
+    id="import-qpb-btn"
+    type="button"
+    class="nav-btn btn-primary"
+  >
+    Import
+  </button>
+
+</div>
+
+
+
+
+
+
+    <div class="form-group">
+      <label for="input-date">Date</label>
+      <input type="date" id="input-date" />
+    </div>
+
+    <div class="form-group hidden" id="final-qa-group">
+      <label for="input-qa">Final QA (%)</label>
+      <input type="number" id="input-qa" min="0" max="100" step="0.01" />
+    </div>
+
+    <div class="form-group hidden">
+      <label for="input-qa-disability">Disability QA (%)</label>
+      <input type="number" id="input-qa-disability" min="0" max="100" step="0.01" />
+    </div>
+
+    <div class="form-group">
+      <label for="input-qa-disability-count">Disability Audit Count</label>
+      <input type="number" id="input-qa-disability-count" min="0" />
+    </div>
+
+    <div class="form-group hidden" id="commercial-count-group">
+      <label for="input-qa-commercial-count">Commercial Audit Count</label>
+      <input type="number" id="input-qa-commercial-count" min="0" />
+    </div>
+
+    <div class="form-group">
+      <label for="input-aht">AHT (seconds)</label>
+      <input type="number" id="input-aht" />
+    </div>
+
+    <div class="form-group">
+      <label for="input-attendance">Attendance (%)</label>
+      <input type="number" id="input-attendance" min="0" max="100" />
+    </div>
+
+    <center>
+      <button 
+        type="button"
+        class="nav-btn btn-primary"
+        id="save-stats-btn"
+        disabled
+      >
+        Save Stats
+      </button>
+    </center>
+
+    <div id="save-preview" class="mt-20 text-muted"></div>
+
+  </div> <!-- ✅ END WRAPPER -->
+
+</div>
+
+
+							
+												
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+
+<div id="leave-modal" class="hidden modal">
+
+  <div class="modal-content">
+
+    <h4>🌴 Vacation Leave</h4>
+
+    <!-- ✅ show selected date -->
+    <p id="selected-date-label" class="text-center fw-bold"></p>
+
+    <select id="leave-employee"></select>
+
+    <select id="leave-status">
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Denied">Denied</option>
+    </select>
+
+    <div class="modal-actions">
+      <button id="save-leave" class="nav-btn btn-primary">Save</button>
+      <button id="close-leave" class="nav-btn">Cancel</button>
+    </div>
+
+  </div>
+</div>
+
+
+	</main>
+	<footer>
+		&copy; 2026 Piamonte
+	</footer>
+	</div>
+		
+
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+		
+
+<!-- ✅ Firebase (COMPAT) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+<!-- ✅ YOUR CONFIG -->
+<script src="js/core/firebase.js"></script>
+
+<!-- ✅ YOUR APP -->
+<script src="js/core/data.js"></script>
+<script src="js/core/auth.js"></script>
+<script src="js/features/incentives.js"></script>
+<script src="js/components/theme.js"></script>
+<script src="js/components/header.js"></script>
+<script src="js/pages/profile.js"></script>
+<script src="js/features/leave.js"></script>
+<script src="js/features/ranking.js"></script>
+<script src="js/roles/employee.js"></script>
+<script src="js/roles/tl.js"></script>
+<script src="js/pages/ui-charts.js"></script>
+<script src="js/pages/ui.js"></script>
+<script src="js/core/app.js"></script>
+<script src="js/roles/admin.js"></script>
+
+
+		
+
+	</body>
+</html>
