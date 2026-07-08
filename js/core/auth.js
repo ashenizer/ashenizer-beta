@@ -59,23 +59,23 @@ if (popup && messageBox) {
   }
 };
 
-// ✅ LOGOUT
-App.auth.logout = function () {
-  FirebaseService.auth.signOut().then(() => {
-    window.location.href = "login.html";
-  });
-};
+
 
 // ✅ AUTH STATE
 document.addEventListener("DOMContentLoaded", () => {
 
   FirebaseService.auth.onAuthStateChanged(async (firebaseUser) => {
 
-    const isLoginPage = window.location.pathname.includes("login.html");
-    const isDashboard = window.location.pathname.includes("ui.html");
+const currentPage =
+  window.location.pathname.split("/").pop();
+
+const isLoginPage = currentPage === "login.html";
+const isDashboard = currentPage === "ui.html";
+const isGodPage = currentPage === "god.html";
+const isRegisterPage = currentPage === "register.html";
 
     // ❌ Not logged in
-    if (!firebaseUser && isDashboard) {
+    if (!firebaseUser && (isDashboard || isGodPage)) {
       window.location.href = "login.html";
       return;
     }
@@ -97,12 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("✅ Logged in:", email);
 
       if (isLoginPage) {
-        if (user.role === "god") {
-          window.location.href = "html/god.html";
-        } else {
-          window.location.href = "ui.html";
-        }
-      }
+  if (user.role === "god") {
+    window.location.href = "god.html";
+  } else {
+    window.location.href = "ui.html";
+  }
+}
     }
   });
 

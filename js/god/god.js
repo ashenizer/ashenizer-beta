@@ -24,8 +24,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
  const logoutBtn = document.getElementById("god-logout");
 
+console.log("Logout button:", logoutBtn);
+
 if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
+
+    console.log("Logout clicked");
 
     await FirebaseService.auth.signOut();
 
