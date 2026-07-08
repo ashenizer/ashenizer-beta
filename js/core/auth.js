@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (isLoginPage) {
         if (user.role === "god") {
-          window.location.href = "god.html";
+          window.location.href = "html/god.html";
         } else {
           window.location.href = "ui.html";
         }

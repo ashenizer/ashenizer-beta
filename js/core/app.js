@@ -118,6 +118,8 @@ if (App.currentUser?.role === "employee") {
 
   App.incentives.loadEmployeeIncentives(email);
 
+  App.ranking.updateRanking();
+
   setMetric("QA");
 }
 

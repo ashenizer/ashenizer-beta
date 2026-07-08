@@ -230,14 +230,22 @@ const qa = parseFloat(
     r1.textContent = getName(bestOverall);
 
     
+console.log("Top user:", bestOverall);
+console.log("Top caricature:", users[bestOverall]?.caricature);
+console.log("Top profile:", users[bestOverall]?.profilePic);
+
 const pic =
   (users[bestOverall]?.caricature ||
    users[bestOverall]?.profilePic ||
    "https://via.placeholder.com/100")
-  + "?t=" + new Date().getTime();
+  + "?t=" + Date.now();
 
+if (r1Img) {
 
-    if (r1Img) r1Img.src = pic;
+  console.log("Setting top image:", pic);
+
+  r1Img.src = pic;
+}
   }
 
 App.ranking.populateCompareStats(bestOverall);
@@ -316,6 +324,10 @@ if (rAHT && bestAHT) {
   rAHT.textContent = name;
 
   if (rAHTImg) {
+
+console.log("Best AHT user:", bestAHT);
+console.log("Caricature:", users[bestAHT]?.caricature);
+console.log("Profile:", users[bestAHT]?.profilePic);
 
     const img =
       users[bestAHT]?.caricature ||
