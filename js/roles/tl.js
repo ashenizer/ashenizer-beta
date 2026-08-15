@@ -44,72 +44,6 @@ App.tl.populateAgentDropdown = async function () {
 };
 
 
-App.tl.renderHistory = function (email) {
-
-
-  const body = document.getElementById("history-body");
-
-if (!body) return;
-  
-
-const history = [...(App.data.statsStore[email]?.history || [])]
-  .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-
-
-  
-body.innerHTML = history
-.map(
-  (e) => `
-      <tr>
-        <td>${e.date}</td>
-        
-
-<td>
-  <strong>${e.QA ?? "—"}%</strong><br>
-  <small>
-    Dis: ${e.QA_Disability_Count ?? 0} |
-    Com: ${e.QA_Commercial_Count ?? 0}
-  </small>
-</td>
-
-
-        <td>${e.AHT}</td>
-        
-<td>
-  ${e.Attendance != null
-    ? parseFloat(e.Attendance).toFixed(2) + "%"
-    : "—"}
-</td>
-
-        <td>
-          <button class="delete-btn" data-email="${email}" data-id="${e.id}">
-  		❌
-	  </button>
-        </td>
-      </tr>`
-  )
-  .join("");
-
-
-// ✅ ✅ ADD THIS RIGHT HERE ✅ ✅
-document.querySelectorAll(".delete-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const email = btn.dataset.email;
-    const id = btn.dataset.id;
-
-    App.tl.deleteEntry(email, id);
-  });
-});
-
-
-  // ✅ SHOW or HIDE history section properly
-document
-  .getElementById("agent-history")
-  ?.classList.toggle("hidden", history.length === 0);
-};
-
-
 App.tl.deleteEntry = async function(email, id) {
   if (!confirm("Delete this entry?")) return;
 
@@ -140,22 +74,21 @@ const entry =
 App.data.statsStore[email].history =
   history.filter(x => x.id !== id);
 
-const history = App.data.statsStore[email].history;
+const updatedHistory = App.data.statsStore[email].history;
 
-const latest = [...history]
+const latest = [...updatedHistory]
   .sort((a, b) => new Date(a.date) - new Date(b.date))
   .at(-1);
 
 App.data.statsStore[email].current = latest || {};
 
-    // ✅ Refresh UI
-    App.tl.renderHistory(email);
-    App.ranking.updateRanking();
+// ✅ Refresh ranking
+App.ranking.updateRanking();
 
-  } catch (error) {
-    console.error("❌ Delete failed:", error);
-    alert("Delete failed ❌");
-  }
+} catch (error) {
+  console.error("❌ Delete failed:", error);
+  alert("Delete failed ❌\n\n" + error.message);
+}
 };
 
 App.tl.registerEmployee = async function () {
@@ -305,24 +238,44 @@ if (App.currentUser?.role !== "teamlead") {
   return;
 }
 
+const email =
+  App.tlModal.currentAgent;
 
-  const email = document.getElementById("agent-select").value;
+const date =
+  document.getElementById(
+    "modal-input-date"
+  )?.value;
 
-
-const qa = document.getElementById("input-qa").value;
-
-
-const qaDisCount = document.getElementById("input-qa-disability-count").value;
-
-const qaComCount = document.getElementById("input-qa-commercial-count").value;
-
-const member = App.data.users[email];
-
-const aht = document.getElementById("input-aht").value;
-const att = document.getElementById("input-attendance").value;
+const qa =
+  document.getElementById(
+    "modal-input-qa"
+  ).value;
 
 
-  const date = document.getElementById("input-date").value;
+const qaDisCount =
+  document.getElementById(
+    "modal-input-qa-disability-count"
+  )?.value;
+
+const qaComCount =
+  document.getElementById(
+    "modal-input-qa-commercial-count"
+  )?.value;
+
+const aht =
+    document.getElementById(
+        "modal-input-aht"
+    ).value;
+
+const att =
+    document.getElementById(
+        "modal-input-attendance"
+    ).value;
+
+
+
+
+console.log("DATE PICKER:", date);
 
 if (qa && !isValidPercent(qa)) {
   alert("QA must be a valid number");
@@ -358,14 +311,21 @@ if (!date) {
 // ✅ keep this for carry-over
 const prevEntry = { ...(App.data.statsStore[email]?.current || {}) };
 
+console.log("PREV ENTRY:", prevEntry);
+
 delete prevEntry.id;
+delete prevEntry.date;
+
+
 
 
 // ✅ Start with previous values
 let entry = {
-  date,
-  ...prevEntry
+  ...prevEntry,
+  date
 };
+
+console.log("ENTRY BEFORE SAVE:", entry);
 
 // ✅ REQUIRE FINAL QA
 
@@ -404,25 +364,50 @@ try {
 
   // ✅ Then add history
   
-const docRef = await FirebaseService.db
+const historyRef = FirebaseService.db
   .collection("stats")
   .doc(email)
-  .collection("history")
-  .add(entry);
+  .collection("history");
 
-// ✅ store the ID
-entry.id = docRef.id;
+// ✅ Check whether the date already exists
+const existingSnapshot = await historyRef
+  .where("date", "==", date)
+  .limit(1)
+  .get();
 
+if (!existingSnapshot.empty) {
 
-  console.log("✅ Saved to Firestore:", entry);
+  // ✅ Update existing entry
+  const existingDoc = existingSnapshot.docs[0];
 
-  // ✅ ALSO update local store
-  
-App.data.statsStore[email].history.push(entry);
+  await existingDoc.ref.set(entry, { merge: true });
 
-// ✅ ALSO store current separately
+  entry.id = existingDoc.id;
+
+  // ✅ Update local store
+  const index =
+    App.data.statsStore[email].history.findIndex(
+      h => h.id === existingDoc.id
+    );
+
+  if (index !== -1) {
+    App.data.statsStore[email].history[index] = {
+      ...App.data.statsStore[email].history[index],
+      ...entry
+    };
+  }
+
+} else {
+
+  // ✅ Create new day
+  const docRef = await historyRef.add(entry);
+
+  entry.id = docRef.id;
+
+  App.data.statsStore[email].history.push(entry);
+}
+
 App.data.statsStore[email].current = entry;
-
 
 } catch (error) {
   console.error("❌ FIRESTORE SAVE ERROR:", error);
@@ -433,100 +418,7 @@ App.data.statsStore[email].current = entry;
 }
 
 
-  // ✅ Update selected agent stats UI
-  
 
-let latest = App.data.statsStore[email]?.current;
-
-if (!latest || Object.keys(latest).length === 0) {
-  const history = App.data.statsStore[email]?.history || [];
-
-  latest = [...history]
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .at(-1);
-}
-
-
-// 👇 keep this only for arrow comparison
-const historyList = [...(App.data.statsStore[email]?.history || [])]
-  .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-const previousTrend = historyList[historyList.length - 2];
-
-
-// ✅ Monthly average (use selected date already in your code)
-
-let selectedDate = document.getElementById("input-date").value;
-
-// ✅ fallback if empty
-if (!selectedDate) {
-  selectedDate = new Date().toISOString().split("T")[0];
-}
-
-// ✅ Apply WITH colored arrows
-
-
-document.getElementById("selected-qa").innerHTML =
-  (latest?.QA != null ? latest.QA + "%" : "—") +
-  `<br><small>Target: ${App.data.targets.QA}%</small>` +
-  " " +
-  getStatusBadge("QA", latest?.QA);
-
-
-// ✅ SUB BOX DISPLAY
-
-const subBox = document.getElementById("qa-sub-boxes");
-
-if (!latest) {
-  subBox?.classList.add("hidden");
-} else if (member?.qaType === "hybrid") {
-
-  subBox?.classList.remove("hidden");
-
-  document.getElementById("selected-qa-dis").textContent =
-    "Count: " + (latest.QA_Disability_Count ?? 0);
-
-  document.getElementById("selected-qa-com").textContent =
-    "Count: " + (latest.QA_Commercial_Count ?? 0);
-
-} else {
-
-  // ✅ STANDARD AGENT FIX
-  subBox?.classList.remove("hidden");
-
-  const total =
-    (latest.QA_Disability_Count ?? 0) +
-    (latest.QA_Commercial_Count ?? 0);
-
-  document.getElementById("selected-qa-dis").textContent =
-    "Audit Count: " + total;
-
-  document.getElementById("selected-qa-com").textContent = ""; // clean
-}
-
-
-document.getElementById("selected-aht").innerHTML =
-  (latest?.AHT != null ? latest.AHT + "s" : "—") +
-  " " +
-  getStatusBadge("AHT", latest?.AHT) +
-  getTrendArrow(latest?.AHT, previousTrend?.AHT, "AHT");
-
-
-document.getElementById("selected-attendance").innerHTML =
-  
-(latest?.Attendance != null
-  ? parseFloat(latest.Attendance).toFixed(2) + "%"
-  : "—")
- +
-  " " +
-  getStatusBadge("Attendance", latest?.Attendance) +
-  getTrendArrow(latest?.Attendance, previousTrend?.Attendance, "Attendance");
-
-
-  document.getElementById("selected-agent-stats").classList.remove("hidden");
-
-  // ✅ Update history table
-  App.tl.renderHistory(email);
 
   // ✅ Update team stats
   const teamStats = App.data.calculateTeamStats();
@@ -542,10 +434,30 @@ if (teamStats) {
   if (attEl) attEl.textContent = teamStats.attendance;
 }
 
+// Clear stats form
+document.getElementById("modal-input-date").value = "";
+document.getElementById("modal-input-qa").value = "";
+document.getElementById("modal-input-aht").value = "";
+document.getElementById("modal-input-attendance").value = "";
+
+document.getElementById(
+  "modal-input-qa-disability-count"
+).value = "";
+
+const commercialInput =
+  document.getElementById(
+    "modal-input-qa-commercial-count"
+  );
+
+if (commercialInput) {
+  commercialInput.value = "";
+}
+
 
 alert("Stats saved ✅");
 
-App.tl.returnToInitialTLState();
+// Refresh modal performance tab
+App.tlModal.resetToPerformance();
 
 return;
 
@@ -569,31 +481,14 @@ App.tl.resetTLView = function () {
 
 
   // ✅ Hide EVERYTHING
-  document.getElementById("lead-view")?.classList.add("hidden");
-  document.getElementById("selected-agent-stats")?.classList.add("hidden");
   App.ui.hideChart();
-  document.getElementById("tl-input-fields")?.classList.add("hidden");
-  document.getElementById("agent-history")?.classList.add("hidden");
 
-  // ✅ Reset title
-  const title = document.getElementById("selected-agent-title");
-  if (title) {
-    title.textContent = "Selected Agent Performance";
-  }
-
-  // ✅ Clear stat values
-document.getElementById("selected-qa")?.replaceChildren();
-document.getElementById("selected-aht")?.replaceChildren();
-document.getElementById("selected-attendance")?.replaceChildren();
-
-  // ✅ Hide QA sub boxes
-  document.getElementById("qa-sub-boxes")?.classList.add("hidden");
 
   // ✅ Reset chart
 App.ui.resetChart();
 
+};
 
-}
 
 
 App.tl.returnToInitialTLState = function () {
@@ -609,46 +504,120 @@ App.tl.returnToInitialTLState = function () {
   App.ui.currentAgent = null;
 
   // ✅ hide EVERYTHING except main panel
-  document.getElementById("lead-view")?.classList.add("hidden");
-  document.getElementById("selected-agent-stats")?.classList.add("hidden");
   App.ui.hideChart();
-  document.getElementById("tl-input-fields")?.classList.add("hidden");
-  document.getElementById("agent-history")?.classList.add("hidden");
-
-  // ✅ reset title
-  const title = document.getElementById("selected-agent-title");
-  if (title) {
-    title.textContent = "Selected Agent Performance";
-  }
-
-  // ✅ clear displayed values
-const qa = document.getElementById("selected-qa");
-if (qa) qa.innerHTML = "";
-
-const aht = document.getElementById("selected-aht");
-if (aht) aht.innerHTML = "";
-
-const att = document.getElementById("selected-attendance");
-if (att) att.innerHTML = "";
-``
-
-  document.getElementById("qa-sub-boxes")?.classList.add("hidden");
-
+  
   // ✅ reset chart safely
 App.ui.resetChart();
 
   // ✅ clear inputs
-const qaInput = document.getElementById("input-qa");
+const qaInput =
+    document.getElementById("modal-input-qa");
+
+const ahtInput =
+    document.getElementById("modal-input-aht");
+
+const attendanceInput =
+    document.getElementById("modal-input-attendance");
+
+const dateInput =
+    document.getElementById("modal-input-date");
+
+if (dateInput) dateInput.value = "";
 if (qaInput) qaInput.value = "";
-
-const ahtInput = document.getElementById("input-aht");
 if (ahtInput) ahtInput.value = "";
-
-const attendanceInput = document.getElementById("input-attendance");
 if (attendanceInput) attendanceInput.value = "";
 
-const disabilityInput = document.getElementById("input-qa-disability-count");
-if (disabilityInput) disabilityInput.value = "";
+const disabilityInput =
+  document.getElementById(
+    "modal-input-qa-disability-count"
+  );
+
+const commercialInput =
+  document.getElementById(
+    "modal-input-qa-commercial-count"
+  );
+
+if (disabilityInput)
+  disabilityInput.value = "";
+
+if (commercialInput)
+  commercialInput.value = "";
 }
+
+
+App.tl.handleAgentSelection = function () {
+
+  const agentSelect =
+    document.getElementById("agent-select");
+
+  if (!agentSelect) return;
+
+  agentSelect.addEventListener("change", () => {
+
+    const email = agentSelect.value;
+
+
+
+  // ✅ ✅ HARD GUARD (THIS FIXES EVERYTHING)
+
+if (!email) {
+  App.tl.resetTLView();
+  return;
+}
+
+
+  App.ui.currentAgent = email;
+
+  // ✅ SHOW UI ONLY AFTER SELECTION
+document.getElementById("lead-view")
+?.classList.add("hidden");
+
+
+
+
+  const member = App.data.users[email];
+const commercialCountGroup =
+  document.getElementById(
+    "modal-commercial-count-group"
+  );
+
+  // ✅ Show commercial input only for hybrid
+  
+
+// ✅ ALWAYS show Final QA
+
+// ✅ Only show commercial fields for hybrid
+if (!email || !member || member.qaType !== "hybrid") {
+
+commercialCountGroup?.classList.add("hidden");
+
+
+const qaComCountInput =
+    document.getElementById(
+        "modal-input-qa-commercial-count"
+    );
+
+if (qaComCountInput) qaComCountInput.value = "";
+
+
+
+} else {
+
+commercialCountGroup?.classList.remove("hidden");
+
+}
+
+  const agentName = App.data.users[email]?.name || "Selected Agent";
+
+App.tlModal.open(
+    agentName,
+    email
+);
+
+return;
+
+  });
+};
+
 
 

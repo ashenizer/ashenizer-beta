@@ -38,6 +38,8 @@ members.forEach(member => {
 
 await App.data.loadStatsFromFirestore();
 
+App.gallery?.init();
+
 
 // ✅ LOAD DROPDOWN
 await App.tl.populateAgentDropdown();
@@ -73,10 +75,12 @@ if (user.role === "god") {
       welcome.textContent = `Welcome, ${user.name}`;
     }
 
-    if (roleBadge) {
-      roleBadge.textContent =
-        user.role === "teamlead" ? "Team Lead" : "Employee";
-    }
+if (roleBadge) {
+  roleBadge.textContent =
+    user.role === "teamlead" ? "Team Lead" : "Employee";
+}
+
+App.whatsNew.loadBanner();
 
     // ✅ VIEWS
     const employeeView = document.getElementById("employee-view");
@@ -86,16 +90,19 @@ if (user.role === "god") {
 
 if (user.role === "teamlead") {
 
-  employeeView?.classList.remove("hidden"); 
+  employeeView?.classList.remove("hidden");
 
-App.ranking.updateRanking();
-  
+  App.ranking.updateRanking();
 
-  // ✅ TL sees their own UI when dashboard is clicked
+  // keep hidden on initial load
   leadView?.classList.add("hidden");
-  document.querySelector(".tl-input-panel")?.classList.add("hidden");
 
-  // 🔽 PASTE THIS EXACT LINE RIGHT HERE 🔽
+  document.querySelector(".tl-input-panel")
+      ?.classList.add("hidden");
+
+  document.getElementById("selected-agent-stats")
+  ?.classList.add("hidden");
+
   await App.tl.loadTeamPerformance();
 
 } else {
@@ -114,6 +121,8 @@ if (App.currentUser?.role === "employee") {
 
   App.employee.renderEmployeeHistory(email);
 
+  App.employee.loadTLNote();
+
   App.ui.updatePerformanceChart(email);
 
   App.incentives.loadEmployeeIncentives(email);
@@ -122,7 +131,6 @@ if (App.currentUser?.role === "employee") {
 
   setMetric("QA");
 }
-
 }
 
 
@@ -134,9 +142,34 @@ if (App.currentUser?.role === "employee") {
     document.getElementById("section-dashboard")?.classList.add("hidden");
 
 
-    // ✅ LOAD DATA
-    App.ui.updatePerformanceChart(email);
 
+// ✅ LOAD DATA
+App.ui.updatePerformanceChart(email);
+
+// ✅ CLOSE WHAT'S NEW MODAL
+document
+    .getElementById("close-whats-new")
+    ?.addEventListener("click", () => {
+
+        document
+            .getElementById("whats-new-modal")
+            ?.classList.add("hidden");
+
+});
+
+document
+    .getElementById("open-whats-new")
+    ?.addEventListener("click", () => {
+
+        App.whatsNew.render();
+
+        document
+            .getElementById("whats-new-modal")
+            ?.classList.remove("hidden");
+
+});
+
+// ✅ MENU BUTTONS
 const menuButtons = document.querySelectorAll(".menu-btn");
 
     menuButtons.forEach(btn => {
@@ -146,6 +179,8 @@ const menuButtons = document.querySelectorAll(".menu-btn");
         btn.classList.add("active");
 
         const section = btn.dataset.section;
+
+console.log("SECTION:", section);
 
 const ranking = document.getElementById("ranking-section");
 const bulletin = document.getElementById("bulletin-section");
@@ -169,10 +204,24 @@ if (ranking) {
         App.ui.hideChart();
         leave?.classList.add("hidden");
 
+document
+  .getElementById("section-news")
+  ?.classList.add("hidden");
+
+document
+  .getElementById("section-gallery")
+  ?.classList.add("hidden");
+
         
 if (section === "leave") {
 
   App.leave.initLeaveCalendar();
+
+  if (App.currentUser?.role === "employee") {
+
+    App.vacationRequests.startSelectionMode();
+
+  }
 
 }
 
@@ -181,13 +230,16 @@ if (section === "leave") {
 
 if (section === "dashboard") {
 
+console.log("📊 PERFORMANCE CLICKED");
+
   // ✅ EMPLOYEE VIEW
   if (App.currentUser?.role === "employee") {
     stats?.classList.remove("hidden");
     ranking?.classList.add("hidden"); // ✅ force hide ranking
 
-    App.employee.updatePersonalStats(App.currentUserEmail);
-    App.employee.renderEmployeeHistory(App.currentUserEmail);
+App.employee.updatePersonalStats(App.currentUserEmail);
+App.employee.renderEmployeeHistory(App.currentUserEmail);
+App.employee.loadTLNote();
   }
 
 
@@ -203,8 +255,42 @@ if (App.currentUser?.role === "teamlead") {
 
 
   // ✅ HIDE OTHER SECTIONS
-  document.getElementById("lead-view")?.classList.add("hidden");
-  document.getElementById("selected-agent-stats")?.classList.add("hidden");
+document.getElementById("lead-view")?.classList.remove("hidden");
+
+console.log(
+  "lead-view hidden?",
+  document.getElementById("lead-view")?.classList.contains("hidden")
+);
+
+console.log(
+  "team-qa-card:",
+  document.getElementById("team-qa-card")
+);
+
+console.log(
+  "team-aht-card:",
+  document.getElementById("team-aht-card")
+);
+
+console.log(
+  "team-attendance-card:",
+  document.getElementById("team-attendance-card")
+);
+
+console.log(
+  "lead-view element:",
+  document.getElementById("lead-view")
+);
+
+console.log(
+  "lead-view height:",
+  document.getElementById("lead-view")?.offsetHeight
+);
+
+
+document.getElementById("selected-agent-stats")?.classList.add("hidden");
+
+
 
   // ✅ HIDE CHART
   App.ui.hideChart();
@@ -215,13 +301,30 @@ if (App.currentUser?.role === "teamlead") {
 
 
 }
- else if (section === "news") {
-          bulletin?.classList.remove("hidden");
+else if (section === "news") {
 
-        } else if (section === "leave") {
+    App.whatsNew.render();
+
+    document
+        .getElementById(
+            "whats-new-modal"
+        )
+        ?.classList.remove("hidden");
+
+} else if (section === "leave") {
           leave?.classList.remove("hidden");
 
-        
+} else if (section === "gallery") {
+
+  const gallery =
+    document.getElementById("section-gallery");
+
+  console.log("Gallery clicked");
+
+  console.log(gallery);
+
+  gallery?.classList.remove("hidden");
+
 
 
 } else if (section === "ranking") {
@@ -239,9 +342,10 @@ if (App.currentUser?.role === "teamlead") {
 
 
 
-        if (section !== "dashboard") {
+if (section !== "dashboard") {
 
-  document.getElementById("lead-view")?.classList.add("hidden");
+  document.getElementById("lead-view")
+    ?.classList.add("hidden");
 
   document.getElementById("selected-agent-stats")
     ?.classList.add("hidden");
@@ -255,6 +359,7 @@ if (App.currentUser?.role === "teamlead") {
   App.ui.hideChart();
 
 }
+
 
         console.log("✅ Dashboard loaded for:", email);
 

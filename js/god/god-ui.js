@@ -11,6 +11,14 @@ function setupOrbitInteraction() {
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
 
+document
+  .querySelectorAll(".orbit-btn")
+  .forEach(b => {
+    b.classList.remove("active");
+  });
+
+btn.classList.add("active");
+
       const target = btn.dataset.panel;
 
       // ✅ Hide all panels
@@ -19,9 +27,20 @@ function setupOrbitInteraction() {
       });
 
       // ✅ Show selected panel
-      document.getElementById("panel-" + target)
-        ?.classList.remove("hidden");
+const panel =
+  document.getElementById("panel-" + target);
 
+if (panel) {
+
+  panel.classList.remove("hidden");
+
+  panel.classList.remove("panel-active");
+
+  void panel.offsetWidth;
+
+  panel.classList.add("panel-active");
+
+}
     });
   });
 

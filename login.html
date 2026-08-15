@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>My First Website</title>
 		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/forgot.css">
 	</head>
 	<body>
 		<div class="page-grid">
@@ -48,7 +49,7 @@
 					</div>	
 					
 					<h2>Employee Login</h2>
-					<form>
+					<form id="login-form">
 						<div class="form-group">
 							<label for="email">Email</label>
 							<input type="email" id="email" required />
@@ -61,7 +62,10 @@
 
 						<!-- Fake login for now -->
 						<center>
-							<button type="button" class="login-btn" id="login-btn">
+							<button
+                                                            type="submit"
+                                                            class="login-btn"
+                                                            id="login-btn">
 								Login
 							</button>
 						</center>
@@ -72,33 +76,63 @@
   Forgot Password?
 </a>
 
-							
+
+						</center>
+</form>
+</section>
+</main>
+
 <div id="forgot-modal" class="modal hidden">
   <div class="modal-content">
 
-    <h4>Reset Password</h4>
+    <h4>🌸 Password Reset Request</h4>
 
-    <input id="fp-email" placeholder="Email" />
-    <input id="fp-current" type="password" placeholder="Current Password" />
-    <input id="fp-new" type="password" placeholder="New Password" />
-    <input id="fp-confirm" type="password" placeholder="Confirm Password" />
+    <input
+      id="fp-email"
+      type="email"
+      placeholder="Company Email"
+    >
+
+<input
+  id="fp-new-password"
+  type="password"
+  placeholder="Requested New Password 🔐"
+/>
+
+    <textarea
+      id="fp-reason"
+      placeholder="Briefly tell us why you need a password reset 💌"
+    ></textarea>
 
     <div class="modal-actions">
-      <button id="fp-submit">Submit</button>
-      <button id="fp-close">Cancel</button>
+
+      <button
+        id="fp-submit"
+        class="nav-btn btn-primary"
+      >
+        Send Request 💖
+      </button>
+
+      <button
+        id="fp-close"
+        class="nav-btn"
+      >
+        Cancel
+      </button>
+
     </div>
 
   </div>
 </div>
 
-						</center>
-					</form>
-				</section>
-			</main>
-			<footer>
-					&copy; 2026 Piamonte
-			</footer>
-		</div>
+<footer>
+  &copy; 2026 Piamonte
+</footer>
+
+</div> <!-- page-grid -->
+	
+
+
 
 	
 		
@@ -127,7 +161,7 @@
 <script src="js/pages/ui-charts.js"></script>
 <script src="js/pages/ui.js"></script>
 <script src="js/core/app.js"></script>
-<script src="js/core/admin.js"></script>
+<script src="js/role/admin.js"></script>
 
 
 

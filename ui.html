@@ -5,6 +5,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>UI index</title>
 		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/gallery.css">
+		<link rel="stylesheet" href="css/vacationRequests.css">
+		<link rel="stylesheet" href="css/whatsNew.css">
+		<link rel="stylesheet" href="css/forgot.css">
+		<link rel="stylesheet" href="css/ocr.css">
+		<link rel="stylesheet" href="css/performanceModal.css">
 		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&family=Nunito:wght@300;400;700&family=Pacifico&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 	</head>
@@ -94,9 +100,28 @@
 </nav>
 
 
-			</header>
-		
-		<main class="dashboard">
+</header>
+
+<div class="whats-new-banner" id="open-whats-new">
+
+<div class="whats-new-card">
+
+    <div
+        class="whats-new-badge"
+        id="release-version"
+    ></div>
+
+    <h3 id="release-title"></h3>
+
+    <p id="release-summary"></p>
+
+    <span class="whats-new-link">
+        View Updates →
+    </span>
+
+</div>
+</div>
+<main class="dashboard">
 			<aside class="dashboard-sidebar">
 				<h3>Dashboard</h3>	
 			
@@ -153,13 +178,20 @@
 
 </li>
 
-  <li><button class="menu-btn" data-section="news">🆕 What's New</button></li>
+  
   <li><button class="menu-btn" data-section="reminder">⚠️ Reminder</button></li>
   <li><button class="menu-btn" data-section="achievement">🏆 Achievements</button></li>
   <li><button class="menu-btn" data-section="leave">🌴 Leave</button></li>
 
 
   <li><button class="menu-btn" data-section="feedback">💬 Suggestions</button></li>
+
+ <li>
+
+  <button class="menu-btn" data-section="gallery">
+    📸 Happy Snaps
+  </button>
+</li>
 </ul>
 			
 
@@ -170,6 +202,8 @@
 			<section class="dashboard-content">
 				<h2 id="welcome"></h2>
 				<p class="text-muted fw-bold" id="role-badge"></p>
+				
+
 
 
 
@@ -182,43 +216,6 @@
 
 </div>
 
-
-
-				
-<!-- ✅ SHARED PERFORMANCE GRAPH -->
-<div id="performance-chart-section" class="stat-card mt-40 hidden">
-
-
-<!-- ✅ TAB HEADER -->
-<div class="chart-tabs">
-  <button class="tab-btn active" data-tab="agent">
-      Monthly Performance
-  </button>
-
-  <button class="tab-btn" data-tab="ytd">
-    Year to Date
-  </button>
-</div>
-
-  
-<div class="flex-between">
-  <h3 id="chart-title">Agent vs Team Performance</h3>
-
-  <div class="chart-toggle">
-    <button id="toggle-daily" class="nav-btn active">Daily</button>
-    <button id="toggle-monthly" class="nav-btn">Monthly</button>
-  </div>
-
-<div class="chart-toggle mt-10">
-  <button id="metric-qa" class="nav-btn active">QA</button>
-  <button id="metric-aht" class="nav-btn">AHT</button>
-  <button id="metric-att" class="nav-btn">Attendance</button>
-</div>
-
-</div>
-
-  <canvas id="performanceChart" height="120"></canvas>
-</div>
 
 
 
@@ -365,6 +362,16 @@
 
 </div>
 
+<div id="employee-note-card" class="stat-card mt-20 hidden">
+
+  <h3>💬 Team Lead Notes</h3>
+
+  <div id="employee-note-display">
+    No notes available.
+  </div>
+
+</div>
+
 
 <!-- ✅ EMPLOYEE HISTORY (ADD THIS) -->
 <div id="employee-history" class="mt-40 hidden">
@@ -387,11 +394,7 @@
 
 
 
-<!-- ✅ WHAT'S NEW -->
-  <div id="section-news" class="dashboard-section hidden">
-    <h3>What's New</h3>
-    <p>🎉 New dashboard feature released</p>
-  </div>
+
 
   <!-- ✅ REMINDER -->
   <div id="section-reminder" class="dashboard-section hidden">
@@ -402,9 +405,13 @@
 
   <!-- ✅ ACHIEVEMENTS -->
   <div id="section-achievement" class="dashboard-section hidden">
+
+
     <h3>Achievements</h3>
     <p>🏆 Top Performer this month</p>
   </div>
+
+<!-- ✅ HAPPY SNAPS -->
 
   
   <!-- ✅ FEEDBACK -->
@@ -451,101 +458,143 @@
 </div>
 
 
-					
-					
+<div id="section-gallery" class="dashboard-section hidden">
 
-				
-				<!-- Team Lead View -->
-				<div id="lead-view" class="hidden">
-    					<h3>Team Performance</h3>
+  <h2>📸 Happy Snaps</h2>
 
-    					<!-- ✅ TEAM STATS -->
-   					<div class="stat-card" id="team-qa-card">
-        <div class="stat-label">TEAM QA</div>
-        <div class="stat-value team-qa-value" id="team-qa-value">--</div>
+  <p class="gallery-subtitle">
+    Share team moments, celebrations, achievements, and memories 💖
+  </p>
+
+<div class="happy-snaps-upload">
+
+    <label for="gallery-upload">
+      🌸 Click to upload your happy moments
+    </label>
+
+    <input
+      type="file"
+      id="gallery-upload"
+      accept="image/*"
+      multiple
+      hidden
+    />
+
+</div>
+
+  <div id="gallery-grid" class="gallery-grid"></div>
+
+<div id="gallery-modal" class="gallery-modal hidden">
+
+  <span id="gallery-close">&times;</span>
+
+  <button
+    id="gallery-prev"
+    class="gallery-nav"
+  >
+    ‹
+  </button>
+
+  <img
+    id="gallery-modal-image"
+    class="gallery-modal-image"
+  />
+
+  <button
+    id="gallery-next"
+    class="gallery-nav"
+  >
+    ›
+  </button>
+
+</div>
+
+<!-- 🌸 Upload Preview Modal -->
+
+<div id="gallery-upload-modal" class="gallery-modal hidden">
+
+  <div class="gallery-upload-card">
+
+    <h3>🌸 Create Happy Snap</h3>
+
+  
+    <img
+  id="gallery-preview-image"
+  class="gallery-preview-image"
+/>
+
+    
+
+    <textarea
+      id="gallery-popup-caption"
+      placeholder="Share something sweet about this memory 💖"
+    ></textarea>
+
+    <div class="modal-actions">
+
+      <button
+        id="gallery-post-btn"
+        class="nav-btn btn-primary"
+      >
+        Post 💖
+      </button>
+
+      <button
+        id="gallery-cancel-btn"
+        class="nav-btn btn-danger"
+      >
+        Cancel
+      </button>
+
     </div>
 
-    <div class="stat-card" id="team-aht-card">
-        <div class="stat-label">TEAM AHT</div>
-        <div class="stat-value team-aht-value" id="team-aht-value">--</div>
-    </div>
-
-    <div class="stat-card" id="team-attendance-card">
-        <div class="stat-label">TEAM ATTENDANCE</div>
-        <div class="stat-value team-attendance-value" id="team-attendance-value">--</div>
-    </div>
-
-					
-    				</div>
-
-   				 <!-- ✅ SELECTED AGENT SECTION (NOW UNDER TEAM STATS) -->
-    				 
-				<div id="selected-agent-stats" class="hidden mt-40">
-  					<h3 id="selected-agent-title">Selected Agent Performance</h3>
-
-
-        				<div class="stats-grid">
-            					
-
-  <div class="stat-card">
-    <p class="stat-label">QA</p>
-    <p class="stat-value" id="selected-qa">—</p>
-
-    <div id="qa-sub-boxes" class="qa-sub-grid hidden">
-      <div class="sub-box">
-        <p class="sub-label">Disability</p>
-        <p class="sub-value" id="selected-qa-dis">—</p>
-      </div>
-
-      <div class="sub-box">
-        <p class="sub-label">Commercial</p>
-        <p class="sub-value" id="selected-qa-com">—</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <p class="stat-label">AHT</p>
-    <p class="stat-value" id="selected-aht">—</p>
-  </div>
-
-  <div class="stat-card">
-    <p class="stat-label">Attendance</p>
-    <p class="stat-value" id="selected-attendance">—</p>
   </div>
 
 </div>
-            				
-        			<!-- ✅ HISTORY INSIDE SAME GROUP -->
-        			<div id="agent-history" class="mt-40 hidden">
-            				<h4>Performance History</h4>
-
-            				<div class="stat-card">
-                				<table class="history-table">
-                    					<thead>
-                        					<tr>
-                            						<th>Date</th>
-                            						<th>QA</th>
-                            						<th>AHT</th>
-                            						<th>Attendance</th>
-                        					</tr>
-                    					</thead>
-                    					<tbody id="history-body"></tbody>
-                				</table>
-            				</div>
-        			</div>
-    			</div>
 
 
+
+</div>			
+
+   				 <!-- ✅ SELECTED AGENT SECTION (NOW UNDER TEAM STATS) -->
 
 			
 <div class="tl-input-panel mt-40 hidden">
 
-  <hr class="mt-20">
 
 
+<h3>📸 Import Performance Screenshot</h3>
 
-  <h3>Update Employee Stats</h3>
+
+<div
+  id="ocr-dropzone"
+  class="ocr-dropzone"
+>
+
+  <div class="ocr-icon">
+    📸
+  </div>
+
+  <div class="ocr-title">
+    Import Performance Screenshot
+  </div>
+
+  <div class="ocr-subtitle">
+    Drag & Drop • Click to Browse • Ctrl + V
+  </div>
+
+  <div class="ocr-tip">
+    Supports screenshots directly from Snipping Tool
+  </div>
+
+  <input
+    type="file"
+    id="ocr-upload"
+    accept="image/*"
+    hidden
+  />
+
+</div>
 
   <!-- ✅ KEEP DROPDOWN OUTSIDE WRAPPER -->
   <div class="form-group">
@@ -556,186 +605,9 @@
     <small class="field-error"></small>
   </div>
 
-  <!-- ✅ EVERYTHING ELSE GOES INSIDE HERE -->
-
-
-  <div id="tl-input-fields" class="hidden">
-
-<h3 class="mt-20">QPB History</h3>
-<table class="history-table" id="incentive-history-table">
-  <thead>
-<tr>
-  <th>Month</th>
-  <th>Grade</th>
-  <th>Amount</th>
-  <th>Action</th>
-</tr>
-
-  </thead>
-
-  <tbody id="incentive-history-body">
-  </tbody>
-</table>
-<div id="manual-qpb-panel">
-<h3>QPB Incentive</h3>
-
-
-
-<div class="chart-tabs">
-
-  <button
-    class="tab-btn active"
-    id="manual-qpb-tab"
-  >
-    Manual Entry
-  </button>
-
-  <button
-    class="tab-btn"
-    id="bulk-qpb-tab"
-  >
-    Free Flow
-  </button>
-
 </div>
 
 
-<div class="form-group">
-  <label for="incentive-month">
-    Month
-  </label>
-
-  <select id="incentive-month">
-    <option value="">Select Month</option>
-  </select>
-</div>
-
-<div class="form-group">
-  <label for="incentive-amount">
-    Incentive Amount (₱)
-  </label>
-
-  <input
-    type="number"
-    id="incentive-amount"
-    min="0"
-    placeholder="5000"
-  />
-</div>
-
-<select id="qpb-grade">
-  <option value="">Select Grade</option>
-  <option value="EA">EA</option>
-  <option value="AMORE">AMORE</option>
-  <option value="FA">FA</option>
-  <option value="AMOST">AMOST</option>
-</select>
-
-
-
-
-
-<center>
-  <div class="modal-actions">
-  <button
-    type="button"
-    class="nav-btn btn-primary"
-    id="save-incentive-btn"
-  >
-    Save Incentive
-  </button>
-
-  <button
-    type="button"
-    class="nav-btn btn-danger"
-    id="delete-incentive-btn"
-  >
-    Delete
-  </button>
-</div>
-</center>
-</div>
-
-
-<div
-  id="bulk-qpb-panel"
-  class="hidden"
->
-
- <textarea
-  id="bulk-qpb-input"
-  rows="8"
-  placeholder="June 5000 EA
-July 4500 AMORE
-August 3000 FA">
-</textarea>
-
-  <button
-    id="import-qpb-btn"
-    type="button"
-    class="nav-btn btn-primary"
-  >
-    Import
-  </button>
-
-</div>
-
-
-
-
-
-
-    <div class="form-group">
-      <label for="input-date">Date</label>
-      <input type="date" id="input-date" />
-    </div>
-
-    <div class="form-group hidden" id="final-qa-group">
-      <label for="input-qa">Final QA (%)</label>
-      <input type="number" id="input-qa" min="0" max="100" step="0.01" />
-    </div>
-
-    <div class="form-group hidden">
-      <label for="input-qa-disability">Disability QA (%)</label>
-      <input type="number" id="input-qa-disability" min="0" max="100" step="0.01" />
-    </div>
-
-    <div class="form-group">
-      <label for="input-qa-disability-count">Disability Audit Count</label>
-      <input type="number" id="input-qa-disability-count" min="0" />
-    </div>
-
-    <div class="form-group hidden" id="commercial-count-group">
-      <label for="input-qa-commercial-count">Commercial Audit Count</label>
-      <input type="number" id="input-qa-commercial-count" min="0" />
-    </div>
-
-    <div class="form-group">
-      <label for="input-aht">AHT (seconds)</label>
-      <input type="number" id="input-aht" />
-    </div>
-
-    <div class="form-group">
-      <label for="input-attendance">Attendance (%)</label>
-      <input type="number" id="input-attendance" min="0" max="100" />
-    </div>
-
-    <center>
-      <button 
-        type="button"
-        class="nav-btn btn-primary"
-        id="save-stats-btn"
-        disabled
-      >
-        Save Stats
-      </button>
-    </center>
-
-    <div id="save-preview" class="mt-20 text-muted"></div>
-
-  </div> <!-- ✅ END WRAPPER -->
-
-</div>
 
 
 							
@@ -747,7 +619,7 @@ August 3000 FA">
 			</div>
 		</section>
 
-
+</div>
 
 <div id="leave-modal" class="hidden modal">
 
@@ -772,6 +644,821 @@ August 3000 FA">
     </div>
 
   </div>
+
+</div>
+
+<div id="leave-request-modal" class="hidden modal">
+
+  <div class="modal-content">
+
+    <h3>🩷 Vacation Day Request</h3>
+
+<div class="leave-month-header">
+
+<span id="leave-month-title"></span>
+
+</div>
+
+    <p id="request-selected-date"></p>
+
+    <div class="leave-request-group">
+
+      <label>💖 Vacation Day 1</label>
+      <input
+        type="date"
+        id="leave-date-1"
+      >
+
+    </div>
+
+    <div class="leave-request-group">
+
+      <label>💖 Vacation Day 2</label>
+      <input
+        type="date"
+        id="leave-date-2"
+      >
+
+    </div>
+
+    <div class="leave-request-group">
+
+      <label>💖 Vacation Day 3</label>
+      <input
+        type="date"
+        id="leave-date-3"
+      >
+
+    </div>
+
+<button
+  id="add-more-days"
+  type="button"
+  class="nav-btn"
+>
+  ➕ Add More Days
+</button>
+
+<div
+  id="additional-days-section"
+  class="hidden"
+>
+
+  <div class="leave-request-group">
+
+    <label>💖 Vacation Day 4</label>
+
+    <input
+      type="date"
+      id="leave-date-4"
+    >
+
+  </div>
+
+  <div class="leave-request-group">
+
+    <label>💖 Vacation Day 5</label>
+
+    <input
+      type="date"
+      id="leave-date-5"
+    >
+
+  </div>
+
+<label>
+    💌 Reason for Additional Vacation Days
+</label>
+
+<textarea
+    id="extra-days-reason"
+    rows="4"
+    placeholder="Tell us a little more about your vacation request 💖"
+></textarea>
+
+</div>
+
+    <div class="modal-actions">
+
+      <button
+        id="close-request-modal"
+        class="nav-btn"
+      >
+        Cancel
+      </button>
+
+      <button
+        id="submit-request"
+        class="nav-btn btn-primary"
+      >
+        Submit
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+    </div>
+
+<div id="confirm-modal" class="confirm-modal hidden">
+
+  <div class="confirm-card">
+
+    <div class="confirm-icon">
+      🩷
+    </div>
+
+    <h3>Delete Comment?</h3>
+
+    <p>
+      Are you sure you want to remove this comment?
+    </p>
+
+    <div class="confirm-actions">
+
+      <button
+        id="confirm-yes"
+        class="nav-btn btn-danger"
+      >
+        Delete 🗑️
+      </button>
+
+      <button
+        id="confirm-no"
+        class="nav-btn btn-primary"
+      >
+        Keep 💖
+      </button>
+</div>
+</div>
+</div>
+
+<div
+    id="gallery-post-modal"
+    class="gallery-modal hidden"
+>
+
+    <div class="gallery-post-layout">
+
+        <div class="gallery-post-image">
+
+          <button
+             id="post-prev-image"
+             class="gallery-post-nav"
+          >
+                  ‹
+          </button>
+
+          <img
+              id="post-modal-image"
+          >
+
+          <div id="post-image-counter"
+           class="post-image-counter">
+               1 / 1
+          </div>
+
+          <div
+           id="post-image-thumbnails"
+           class="post-image-thumbnails">
+          </div>
+
+          <button
+              id="post-next-image"
+              class="gallery-post-nav"
+          >
+                  ›
+          </button>
+
+        </div>
+
+        <div class="gallery-post-comments">
+
+            <button
+                id="gallery-post-close"
+                class="gallery-post-close"
+            >
+                    ✕
+            </button>
+
+            <h3>Comments 💬</h3>
+
+            <div
+                id="post-modal-comments"
+            ></div>
+
+            <div
+                class="post-comment-input-row"
+            >
+
+                <input
+                    id="post-modal-input"
+                    placeholder="Write a comment..."
+                >
+
+                <button
+                    id="post-modal-send"
+                >
+                    Post
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div
+    id="whats-new-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <h2>
+            🆕 What's New
+        </h2>
+
+<div class="whats-new-layout">
+
+    <div
+        id="whats-new-sidebar"
+        class="whats-new-sidebar"
+    ></div>
+
+    <div
+        id="whats-new-container"
+        class="whats-new-content"
+    ></div>
+
+</div>
+
+
+        <button
+            id="close-whats-new"
+            class="nav-btn btn-primary"
+        >
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+<div
+    id="vacation-alert-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <h3>
+            🌴 Vacation Requests Pending
+        </h3>
+
+        <p>
+            Employees have vacation requests waiting for review.
+        </p>
+
+        <div
+            id="vacation-alert-list"
+            class="mt-20"
+        ></div>
+
+        <button
+            id="close-vacation-alert"
+            class="nav-btn btn-primary"
+        >
+            Review Later
+        </button>
+
+    </div>
+
+</div>
+
+<div
+    id="leave-email-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <h3>💖 Leave Request Email Template</h3>
+
+
+
+<div class="leave-email-banner">
+
+    <div class="leave-email-icon">
+        💌
+    </div>
+
+    <h3>
+        Leave Request Submitted
+    </h3>
+
+    <p>
+        Your vacation leave request has been
+        saved successfully.
+    </p>
+
+    <div class="leave-email-reminder">
+
+    🌸 Almost done! Please copy the email
+    template below and send it to your
+    Team Lead for approval.
+
+</div>
+
+<div class="leave-email-subject-card">
+
+    <div class="leave-email-subject-label">
+        📌 Required Outlook Subject
+    </div>
+
+    <div class="leave-email-subject">
+        TEAM RIA - VL REQUEST
+    </div>
+
+</div>
+
+        <textarea
+            id="leave-email-preview"
+            rows="18"
+            readonly
+            style="
+                width:100%;
+                resize:none;
+            "
+        ></textarea>
+
+        <div class="modal-actions">
+
+
+
+    <button
+        id="copy-leave-subject"
+        class="nav-btn"
+    >
+        Copy Subject 📌
+    </button>
+
+    <button
+        id="copy-leave-email"
+        class="nav-btn btn-primary"
+    >
+        Copy Email 📋
+    </button>
+
+    <button
+        id="close-email-preview"
+        class="nav-btn"
+    >
+        Close
+    </button>
+
+</div>
+
+    </div> <!-- leave-email-modal .modal-content -->
+
+</div> <!-- leave-email-modal -->
+
+
+<div
+    id="email-copied-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-content email-copied-card">
+
+        <div class="email-copied-stars">
+            ✨ 💖 ✨
+        </div>
+
+        <div class="email-copied-icon">
+            📋
+        </div>
+
+        <h3>
+            Email Copied!
+        </h3>
+
+        <p>
+            Your leave request email has been copied successfully.
+        </p>
+
+<div class="email-copied-message">
+
+    🌸 You're all set!
+
+    <br><br>
+
+    Don't forget to use:
+
+    <br><br>
+
+    <strong>
+        TEAM RIA - VL REQUEST
+    </strong>
+
+    <br><br>
+
+    as your Outlook subject line before sending the email.
+
+</div>
+
+        <button
+            id="close-email-copied"
+            class="nav-btn btn-primary"
+        >
+            Yay! 💖
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<div
+    id="ocr-loading-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <h3>📸 Processing Screenshot</h3>
+
+        <p id="ocr-loading-text">
+            Reading screenshot...
+        </p>
+
+        <div class="ocr-spinner"></div>
+
+    </div>
+
+</div>
+
+<div
+    id="ocr-review-modal"
+    class="modal hidden"
+>
+
+    <div class="modal-content ocr-modal-content">
+
+        <h3>
+            📸 OCR Import Review
+        </h3>
+
+<p>
+    Review scanned employees before importing.
+</p>
+
+<div class="form-group">
+
+    <label for="ocr-modal-date">
+        Import Date
+    </label>
+
+    <input
+        type="date"
+        id="ocr-modal-date"
+    />
+
+</div>
+
+
+
+
+        <div id="ocr-review-body">
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                id="ocr-cancel-btn"
+                class="nav-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="ocr-confirm-btn"
+                class="nav-btn btn-primary"
+            >
+                🚀 Import
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="tl-modal" class="modal hidden">
+
+  <div class="modal-content tl-modal-content">
+
+    <div class="tl-modal-header">
+
+      <h2 id="tl-modal-title">
+        Agent
+      </h2>
+
+      <button id="close-tl-modal">
+        ✕
+      </button>
+
+    </div>
+
+<div class="tl-tabs">
+
+  <button
+    class="tl-tab active"
+    data-tab="performance">
+    📊 Performance
+  </button>
+
+  <button
+    class="tl-tab"
+    data-tab="stats">
+    ➕ Add Stats
+  </button>
+
+  <button
+    class="tl-tab"
+    data-tab="incentives">
+    💰 Incentives
+  </button>
+
+  <button
+    class="tl-tab"
+    data-tab="notes">
+    📝 Notes
+  </button>
+
+</div>
+
+    <div class="tl-tab-content">
+
+      <div
+        id="tl-performance-tab">
+
+      </div>
+
+<div
+  id="tl-stats-tab"
+  class="hidden">
+
+  <h3>Update Employee Stats</h3>
+
+  <div class="form-group">
+    <label>Date</label>
+    <input
+      type="date"
+      id="modal-input-date"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Final QA (%)</label>
+    <input
+      type="number"
+      id="modal-input-qa"
+      min="0"
+      max="100"
+      step="0.01"
+    />
+  </div>
+
+<div class="form-group">
+  <label>Disability Audit Count</label>
+  <input
+    type="number"
+    id="modal-input-qa-disability-count"
+    min="0"
+  />
+</div>
+
+<div
+  class="form-group hidden"
+  id="modal-commercial-count-group"
+>
+  <label>Commercial Audit Count</label>
+  <input
+    type="number"
+    id="modal-input-qa-commercial-count"
+    min="0"
+  />
+</div>
+
+  <div class="form-group">
+    <label>AHT (seconds)</label>
+    <input
+      type="number"
+      id="modal-input-aht"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Attendance (%)</label>
+    <input
+      type="number"
+      id="modal-input-attendance"
+      min="0"
+      max="100"
+    />
+  </div>
+
+  <center>
+    <button
+      type="button"
+      class="nav-btn btn-primary"
+      id="modal-save-stats-btn">
+      Save Stats
+    </button>
+  </center>
+
+</div>
+
+<div
+  id="tl-incentives-tab"
+  class="hidden">
+
+  <div id="tl-incentive-section">
+
+    <div class="tl-tabs">
+
+      <button
+        id="manual-qpb-tab"
+        class="tl-tab active">
+        Manual Entry
+      </button>
+
+      <button
+        id="bulk-qpb-tab"
+        class="tl-tab">
+        Bulk Import
+      </button>
+
+    </div>
+
+    <div id="manual-qpb-panel">
+
+      <div class="form-group">
+
+        <label>Month</label>
+
+        <select id="incentive-month">
+          <option value="">
+            Select Month
+          </option>
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Amount</label>
+
+        <input
+          type="number"
+          id="incentive-amount"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Additional Incentive</label>
+
+        <input
+          type="number"
+          id="additional-incentive"
+          value="0"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Grade</label>
+
+        <select id="qpb-grade">
+
+          <option value="">
+            Select Grade
+          </option>
+
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+
+        </select>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          id="save-incentive-btn"
+          class="nav-btn btn-primary">
+
+          Save
+
+        </button>
+
+        <button
+          id="delete-incentive-btn"
+          class="nav-btn">
+
+          Delete
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <div
+      id="bulk-qpb-panel"
+      class="hidden">
+
+      <textarea
+        id="bulk-qpb-input"
+        rows="8"
+        placeholder="July 1000 A"
+      ></textarea>
+
+      <button
+        id="import-qpb-btn"
+        class="nav-btn btn-primary">
+
+        Import
+
+      </button>
+
+    </div>
+
+    <table class="history-table mt-20">
+
+      <thead>
+
+        <tr>
+          <th>Month</th>
+          <th>Grade</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="incentive-history-body"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+
+    
+
+<div
+  id="tl-notes-tab"
+  class="hidden">
+
+  <h3>📝 Team Lead Notes</h3>
+
+  <div class="form-group">
+    <textarea
+      id="modal-employee-note"
+      rows="8"
+      placeholder="Enter coaching notes, reminders, commendations..."
+    ></textarea>
+  </div>
+
+  <center>
+    <button
+      type="button"
+      class="nav-btn btn-primary"
+      id="modal-save-note-btn">
+      Save Note
+    </button>
+  </center>
+
+</div>
+</div>
+  </div>
+
+</div>
 </div>
 
 
@@ -783,6 +1470,7 @@ August 3000 FA">
 		
 
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 		
 
@@ -804,6 +1492,13 @@ August 3000 FA">
 <script src="js/pages/profile.js"></script>
 <script src="js/features/leave.js"></script>
 <script src="js/features/ranking.js"></script>
+<script src="js/features/vacationRequests.js"></script>
+<script src="js/features/gallery.js"></script>
+<script src="js/features/whatsNew.js"></script>
+<script src="js/features/tlModal.js"></script>
+<script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="js/features/statsOCR.js"></script>
+<script src="js/features/statsImport.js"></script>
 <script src="js/roles/employee.js"></script>
 <script src="js/roles/tl.js"></script>
 <script src="js/pages/ui-charts.js"></script>
@@ -812,7 +1507,11 @@ August 3000 FA">
 <script src="js/roles/admin.js"></script>
 
 
+<script>
+emailjs.init("0rrn_74V66MuuIM01");
+</script>
 		
 
 	</body>
 </html>
+

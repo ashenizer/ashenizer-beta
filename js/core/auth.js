@@ -66,6 +66,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   FirebaseService.auth.onAuthStateChanged(async (firebaseUser) => {
 
+const loginForm =
+  document.getElementById("login-form");
+
+if (loginForm) {
+
+  loginForm.addEventListener(
+    "submit",
+    async (e) => {
+
+      e.preventDefault();
+
+      await App.auth.login();
+
+    }
+  );
+
+}
+
 const currentPage =
   window.location.pathname.split("/").pop();
 

@@ -129,3 +129,49 @@ const history = [...(App.data.statsStore[email]?.history || [])]
   section.classList.remove("hidden");
 };
 
+App.employee.loadTLNote = async function () {
+
+  const email = App.currentUserEmail;
+
+  if (!email) return;
+
+  try {
+
+    const doc = await FirebaseService.db
+      .collection("employeeNotes")
+      .doc(email)
+      .get();
+
+    const card =
+      document.getElementById("employee-note-card");
+
+    const display =
+      document.getElementById("employee-note-display");
+
+    if (!card || !display) return;
+
+    if (!doc.exists) {
+
+      display.textContent =
+        "No notes available.";
+
+      card.classList.remove("hidden");
+      return;
+    }
+
+    display.textContent =
+      doc.data()?.note || "No notes available.";
+
+    card.classList.remove("hidden");
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load Team Lead note:",
+      error
+    );
+
+  }
+
+};
+

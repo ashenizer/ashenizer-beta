@@ -50,4 +50,4 @@ App.register.createEmployee = async function () {
 document.getElementById("register-btn")?.addEventListener("click", () => {
   App.register.createEmployee();
 });
-``
+

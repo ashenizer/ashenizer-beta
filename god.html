@@ -6,6 +6,7 @@
   <title>GOD MODE</title>
 
   <link rel="stylesheet" href="css/god.css">
+  <link rel="stylesheet" href="css/reponsive.css">
 
   <!-- Futuristic font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
@@ -29,6 +30,35 @@
   <!-- CENTER GLOBE -->
   <div class="globe-container">
     <div class="globe"></div>
+
+<div class="core-status">
+
+  <div class="core-title">
+    SYSTEM ONLINE
+  </div>
+
+  <div class="core-line">
+    REQUESTS
+    <span id="core-requests">
+      0
+    </span>
+  </div>
+
+  <div class="core-line">
+    STATUS
+    <span>
+      ACTIVE
+    </span>
+  </div>
+
+  <div class="core-line">
+    SYNC
+    <span>
+      LIVE
+    </span>
+  </div>
+
+</div>
     <div class="ring orbit-ring" id="orbit-ring">
 
       <!-- ORBIT BUTTONS -->
@@ -61,7 +91,12 @@
 <div class="panel-container">
 
   <div class="panel hidden" id="panel-requests">
-    <h3>Password Requests</h3>
+<h3 class="panel-title">
+  Password Requests
+  <span id="request-count" class="count-badge">
+    0
+  </span>
+</h3>
     <div id="god-requests"></div>
   </div>
 

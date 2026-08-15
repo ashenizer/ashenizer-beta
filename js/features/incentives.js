@@ -39,10 +39,8 @@ App.incentives.populateMonths = function () {
 
 App.incentives.importBulk = async function() {
 
-  const email =
-    document.getElementById(
-      "agent-select"
-    ).value;
+const email =
+  App.tlModal.currentAgent;
 
   if (!email) {
     alert("Select employee first");
@@ -145,12 +143,13 @@ parts.forEach(part => {
       .doc(email)
       .collection("monthly")
       .doc(firestoreMonth)
-      .set({
-        month: firestoreMonth,
-        amount,
-        grade,
-        createdAt: new Date()
-      });
+.set({
+  month: firestoreMonth,
+  amount,
+  additionalIncentive: 0,
+  grade,
+  createdAt: new Date()
+});
 
     console.log(
       "Saved:",
@@ -171,8 +170,8 @@ alert("✅ Import complete");
 
 App.incentives.save = async function () {
 
-  const email =
-    document.getElementById("agent-select").value;
+const email =
+  App.tlModal.currentAgent;
 
   const month =
     document.getElementById("incentive-month").value;
@@ -181,6 +180,12 @@ App.incentives.save = async function () {
     parseFloat(
       document.getElementById("incentive-amount").value
     );
+
+const additionalIncentive =
+  parseFloat(
+    document.getElementById("additional-incentive").value
+  ) || 0;
+
 
   const grade =
   document.getElementById("qpb-grade").value;
@@ -203,21 +208,26 @@ App.incentives.save = async function () {
 
   try {
 
-    await FirebaseService.db
-      .collection("incentives")
-      .doc(email)
-      .collection("monthly")
-      .doc(month)
-      .set({
-  month,
-  amount,
-  grade,
-  createdAt: new Date()
-});
+await FirebaseService.db
+  .collection("incentives")
+  .doc(email)
+  .collection("monthly")
+  .doc(month)
+  .set({
+    month,
+    amount,
+    additionalIncentive,
+    grade,
+    createdAt: new Date()
+  });
 
 
 
     alert("✅ Incentive saved");
+
+document.getElementById(
+  "additional-incentive"
+).value = "0";
 
 App.incentives.loadHistory(email);
 
@@ -372,23 +382,13 @@ document
     App.incentives.delete
   );
 
-document
-  .getElementById("agent-select")
-  ?.addEventListener("change", (e) => {
-
-    const email = e.target.value;
-
-    App.incentives.loadHistory(email);
-
-  });
-
   }
 );
 
 App.incentives.delete = async function () {
 
-  const email =
-    document.getElementById("agent-select").value;
+const email =
+  App.tlModal.currentAgent;
 
   const month =
     document.getElementById("incentive-month").value;
@@ -478,10 +478,19 @@ tbody.innerHTML += `
       ${data.grade || "-"}
     </td>
 
-    <td>
-      ₱${Number(data.amount)
-        .toLocaleString()}
-    </td>
+<td>
+  Base: ₱${Number(data.amount).toLocaleString()}
+  <br>
+  Add'l: ₱${Number(data.additionalIncentive || 0).toLocaleString()}
+  <br>
+  <strong>
+    Total:
+    ₱${(
+      Number(data.amount || 0) +
+      Number(data.additionalIncentive || 0)
+    ).toLocaleString()}
+  </strong>
+</td>
 
     <td>
       <button
@@ -553,8 +562,10 @@ App.incentives.calculateQuarterTotals = function(incentives) {
     const month =
       Number(item.month.split("-")[1]);
 
-    const amount =
-      Number(item.amount) || 0;
+const amount =
+  (Number(item.amount) || 0) +
+  (Number(item.additionalIncentive) || 0);
+
 
     if (month >= 1 && month <= 3) {
       totals.Q1 += amount;
@@ -651,11 +662,26 @@ function render(month) {
 
   if (!data) return;
 
-  document.getElementById(
-    "employee-qpb"
-  ).textContent =
-    `₱${Number(data.amount)
-      .toLocaleString()}`;
+const baseAmount =
+  Number(data.amount || 0);
+
+const additionalAmount =
+  Number(data.additionalIncentive || 0);
+
+const totalAmount =
+  baseAmount + additionalAmount;
+
+document.getElementById(
+  "employee-qpb"
+).innerHTML = `
+  Base: ₱${baseAmount.toLocaleString()}
+  <br>
+  Additional: ₱${additionalAmount.toLocaleString()}
+  <br>
+  <strong>
+    Total: ₱${totalAmount.toLocaleString()}
+  </strong>
+`;
 
   document.getElementById(
     "employee-qpb-grade"

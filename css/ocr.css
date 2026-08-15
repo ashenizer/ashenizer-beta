@@ -1,0 +1,122 @@
+.ocr-modal-content {
+    width: 90%;
+    max-width: 900px;
+}
+
+.ocr-review-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ocr-review-table th,
+.ocr-review-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.ocr-review-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.ocr-dropzone {
+
+  border: 2px dashed #cfcfcf;
+
+  border-radius: 16px;
+
+  padding: 40px 20px;
+
+  margin: 20px 0;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: all .25s ease;
+
+  background: #fafafa;
+
+}
+
+.ocr-dropzone:hover {
+
+  border-color: #ff7db6;
+
+  background: #fff6fb;
+
+}
+
+.ocr-dropzone.drag-active {
+
+  border-color: #ff4fa0;
+
+  background: #ffe6f2;
+
+  transform: scale(1.01);
+
+}
+
+.ocr-icon {
+
+  font-size: 48px;
+
+  margin-bottom: 10px;
+
+}
+
+.ocr-title {
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  margin-bottom: 8px;
+
+}
+
+.ocr-subtitle {
+
+  color: #666;
+
+  margin-bottom: 12px;
+
+}
+
+.ocr-tip {
+
+  font-size: 13px;
+
+  color: #999;
+
+}
+
+.ocr-spinner {
+
+    width: 60px;
+    height: 60px;
+
+    margin: 20px auto;
+
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #ff7eb6;
+
+    border-radius: 50%;
+
+    animation: ocr-spin 1s linear infinite;
+}
+
+/************** Animation ****************/
+
+@keyframes ocr-spin {
+
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+
+}

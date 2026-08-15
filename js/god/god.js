@@ -53,20 +53,57 @@ async function loadRequests() {
     .orderBy("createdAt", "desc")
     .get();
 
+const countBadge =
+  document.getElementById("request-count");
+
+if (countBadge) {
+  countBadge.textContent = snapshot.size;
+}
+
+const coreRequests =
+  document.getElementById("core-requests");
+
+if (coreRequests) {
+  coreRequests.textContent = snapshot.size;
+}
+
   container.innerHTML = snapshot.docs.map(doc => {
 
     const data = doc.data();
 
-    return `
-      <div class="request-card">
-        <p>${data.email}</p>
-        <p>New Password: ${data.newPassword}</p>
+return `
+  <div class="request-card">
 
-        <button onclick="approve('${doc.id}')">
-          ✔ Approve
-        </button>
-      </div>
-    `;
+    <div class="request-title">
+      🔐 PASSWORD REQUEST
+    </div>
+
+    <div class="request-row">
+      <span>Email</span>
+      <strong>${data.email}</strong>
+    </div>
+
+    <div class="request-row">
+      <span>Requested Password</span>
+      <strong>${data.newPassword || "N/A"}</strong>
+    </div>
+
+    <div class="request-row">
+      <span>Status</span>
+      <strong class="status-${data.status}">
+        ${data.status}
+      </strong>
+    </div>
+
+    <button
+      class="approve-btn"
+      onclick="approve('${doc.id}')"
+    >
+      ✔ APPROVE
+    </button>
+
+  </div>
+`;
 
   }).join("");
 }
@@ -77,9 +114,21 @@ window.approve = async function(id) {
   await FirebaseService.db
     .collection("passwordRequests")
     .doc(id)
-    .update({ status: "done" });
+    .update({
 
-  alert("✅ Updated");
+      status: "done",
+
+      approved: true,
+
+      acknowledged: false,
+
+      approvedAt:
+        firebase.firestore.FieldValue.serverTimestamp()
+
+    });
+
+  alert("✅ Password Request Approved");
+
   loadRequests();
 };
 

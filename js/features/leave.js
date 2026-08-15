@@ -3,6 +3,8 @@ App.leave = {};
 
 App.leave.leaveRequests = {};
 
+App.leave.requestedLeaves = {};
+
 App.leave.currentLeaveDate = null;
 
 App.leave.init = function () {
@@ -23,13 +25,83 @@ document.getElementById("save-leave")?.addEventListener("click", async () => {
   const date = App.leave.currentLeaveDate;
 
   try {
+
+const requested = await FirebaseService.db
+  .collection("vacationRequests")
+  .where("employeeName", "==", name)
+  .where("status", "==", "Requested")
+  .get();
+
+let requestUpdated = false;
+
+for (const doc of requested.docs) {
+
+  const data = doc.data();
+
+  if (
+    data.dates &&
+    data.dates.includes(date)
+  ) {
+
+    await FirebaseService.db
+      .collection("vacationRequests")
+      .doc(doc.id)
+      .update({
+        status
+      });
+
+    requestUpdated = true;
+
+    break;
+  }
+}
+
+
     const existing = await FirebaseService.db
       .collection("leaveRequests")
       .where("date", "==", date)
       .where("name", "==", name)
       .get();
 
-    if (!existing.empty) {
+if (requestUpdated) {
+
+  const existingLeave =
+    await FirebaseService.db
+      .collection("leaveRequests")
+      .where("date", "==", date)
+      .where("name", "==", name)
+      .get();
+
+  if (!existingLeave.empty) {
+
+    await FirebaseService.db
+      .collection("leaveRequests")
+      .doc(existingLeave.docs[0].id)
+      .update({
+        status
+      });
+
+  } else {
+
+    await FirebaseService.db
+      .collection("leaveRequests")
+      .add({
+        date,
+        name,
+        status
+      });
+
+  }
+
+  console.log(
+    "✅ Request converted:",
+    name,
+    date
+  );
+
+}
+else if (!existing.empty) {
+
       const docId = existing.docs[0].id;
 
       await FirebaseService.db
@@ -43,8 +115,11 @@ document.getElementById("save-leave")?.addEventListener("click", async () => {
         .add({ date, name, status });
     }
 
-    document.getElementById("leave-modal").classList.add("hidden");
-    await App.leave.loadLeaveRequests();
+document.getElementById("leave-modal").classList.add("hidden");
+
+await App.leave.loadLeaveRequests();
+
+await App.leave.loadRequestedLeaves();
 
   } catch (error) {
     console.error("❌ Error saving leave:", error);
@@ -100,9 +175,13 @@ App.leave.initLeaveCalendar = function () {
   // ✅ Attach listener safely
   dropdown.onchange = App.leave.renderCalendar;
 
-  // ✅ Initial loads
-  App.leave.renderCalendar();
-  App.leave.loadLeaveRequests();
+// ✅ Initial loads
+App.leave.renderCalendar();
+
+App.leave.loadLeaveRequests();
+
+App.leave.loadRequestedLeaves();
+
 };
 
 App.leave.renderCalendar = function () {
@@ -139,6 +218,12 @@ App.leave.renderCalendar = function () {
     const cell = document.createElement("div");
     cell.className = "calendar-day";
 
+if (
+  App.vacationRequests?.selectedDates?.includes(dateKey)
+) {
+  cell.classList.add("vacation-selected");
+}
+
     if (!isTL) {
       cell.classList.add("readonly");
     }
@@ -146,6 +231,19 @@ App.leave.renderCalendar = function () {
     cell.innerHTML = `<strong>${i}</strong>`;
 
     const entries = App.leave.leaveRequests[dateKey] || [];
+
+const requestedEntries =
+  App.leave.requestedLeaves[dateKey] || [];
+
+if (requestedEntries.length) {
+
+  console.log(
+    "📅 Requested found:",
+    dateKey,
+    requestedEntries
+  );
+
+}
 
     entries.forEach(e => {
       const tag = document.createElement("div");
@@ -215,11 +313,50 @@ if (isTL) {
 
     });
 
-    if (isTL) {
-      cell.addEventListener("click", () => {
-        App.leave.openLeaveModal(dateKey);
-      });
-    }
+requestedEntries.forEach(e => {
+
+  const isTL =
+    App.currentUser?.role === "teamlead";
+
+  const isOwner =
+    e.name === App.currentUser?.name;
+
+  if (!isTL && !isOwner) {
+    return;
+  }
+
+  const tag = document.createElement("div");
+
+  tag.className = "calendar-entry requested";
+
+  tag.textContent =
+  `${e.name} (${e.status})`;
+
+  cell.appendChild(tag);
+
+});
+
+
+if (isTL) {
+
+  cell.addEventListener("click", () => {
+
+    App.leave.openLeaveModal(dateKey);
+
+  });
+
+}
+else {
+
+    cell.addEventListener("click", () => {
+
+        App.vacationRequests
+            .openRequestModal(dateKey);
+
+    });
+
+}
+
 
     grid.appendChild(cell);
   }
@@ -250,6 +387,18 @@ if (!App.leave.leaveRequests[data.date]) {
   });
 
   console.log("✅ Loaded leave data:", App.leave.leaveRequests);
+
+console.log(
+  "✅ Requested Leaves:",
+  App.leave.requestedLeaves
+);
+
+console.log(
+  "Requested count:",
+  Object.keys(App.leave.requestedLeaves).length
+);
+
+App.leave.renderCalendar();
 
 
   App.leave.renderCalendar();
