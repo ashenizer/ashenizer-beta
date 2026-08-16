@@ -2,6 +2,8 @@ window.App = window.App || {};
 
 App.vacationRequests = {};
 
+App.vacationRequests.leaveScreenshot = null;
+
 App.vacationRequests.isSelecting = false;
 
 App.vacationRequests.selectedDates = [];
@@ -184,10 +186,18 @@ await App.leave.loadRequestedLeaves();
 
 try {
 
-    await App.vacationRequests.sendEmail(
-        dates,
-        reason
-    );
+App.vacationRequests.pendingDates =
+    dates;
+
+App.vacationRequests.pendingReason =
+    reason;
+
+document
+    .getElementById(
+        "leave-screenshot-modal"
+    )
+    .classList
+    .remove("hidden");
 
     console.log("✅ Email sent");
 
@@ -242,6 +252,114 @@ document
 };
 
 App.vacationRequests.init = function () {
+
+const dropzone =
+    document.getElementById(
+        "leave-screenshot-dropzone"
+    );
+
+const preview =
+    document.getElementById(
+        "leave-screenshot-preview"
+    );
+
+document.addEventListener(
+    "paste",
+    (event) => {
+
+        const item =
+            [...event.clipboardData.items]
+            .find(
+                item =>
+                    item.type.includes(
+                        "image"
+                    )
+            );
+
+        if (!item) return;
+
+        const file =
+            item.getAsFile();
+
+        App.vacationRequests
+            .leaveScreenshot = file;
+
+        preview.src =
+            URL.createObjectURL(file);
+
+        preview.style.display =
+            "block";
+    }
+);
+
+dropzone?.addEventListener(
+    "dragover",
+    (e) => {
+        e.preventDefault();
+    }
+);
+
+dropzone?.addEventListener(
+    "drop",
+    (e) => {
+
+        e.preventDefault();
+
+        const file =
+            e.dataTransfer.files[0];
+
+        if (!file) return;
+
+        App.vacationRequests
+            .leaveScreenshot =
+            file;
+
+        preview.src =
+            URL.createObjectURL(file);
+
+        preview.style.display =
+            "block";
+    }
+);
+
+dropzone?.addEventListener(
+    "click",
+    () => {
+
+        document
+            .getElementById(
+                "leave-screenshot-input"
+            )
+            .click();
+
+    }
+);
+
+document
+    .getElementById(
+        "leave-screenshot-input"
+    )
+    ?.addEventListener(
+        "change",
+        (e) => {
+
+            const file =
+                e.target.files[0];
+
+            if (!file) return;
+
+            App.vacationRequests
+                .leaveScreenshot =
+                file;
+
+            preview.src =
+                URL.createObjectURL(file);
+
+            preview.style.display =
+                "block";
+
+        }
+    );
 
 document
     .getElementById("copy-leave-subject")
@@ -475,6 +593,75 @@ document
 
                 button.textContent =
                     "➖ Hide Extra Days";
+
+            }
+
+        }
+    );
+
+document
+    .getElementById(
+        "send-leave-email"
+    )
+    ?.addEventListener(
+        "click",
+        async () => {
+
+            if (
+                !App.vacationRequests
+                    .leaveScreenshot
+            ) {
+
+                alert(
+                    "Please upload a screenshot first."
+                );
+
+                return;
+            }
+
+            try {
+
+                const imageUrl =
+                    await App
+                    .vacationRequests
+                    .uploadLeaveImage(
+                        App
+                        .vacationRequests
+                        .leaveScreenshot
+                    );
+
+                await App
+                    .vacationRequests
+                    .sendEmail(
+                        App
+                        .vacationRequests
+                        .pendingDates,
+
+                        App
+                        .vacationRequests
+                        .pendingReason,
+
+                        imageUrl
+                    );
+
+                document
+                    .getElementById(
+                        "leave-screenshot-modal"
+                    )
+                    .classList
+                    .add("hidden");
+
+                alert(
+                    "✅ Vacation request sent successfully!"
+                );
+
+            } catch(error) {
+
+                console.error(error);
+
+                alert(
+                    "❌ Failed to send email."
+                );
 
             }
 
@@ -751,27 +938,50 @@ Screenshot of current leave credits:
 App.vacationRequests.sendEmail =
 async function (
     dates,
-    reason
+    reason,
+    screenshotUrl
 ) {
 
-    return emailjs.send(
-        "service_2iqdrlr",
-        "template_koed959",
-        {
-            employee_name:
-                App.currentUser.name,
+return emailjs.send(
+    "service_2iqdrlr",
+    "template_koed959",
+    {
+        employee_name:
+            App.currentUser.name,
 
-            leave_dates:
-                dates.join(", "),
+        leave_dates:
+            dates.join(", "),
 
-            total_days:
-                dates.length,
+        total_days:
+            dates.length,
 
-            reason:
-                reason ||
-                "Personal Time Off"
-        }
-    );
+        reason:
+            reason ||
+            "Personal Time Off",
+
+        screenshot_url:
+            screenshotUrl
+    }
+);
+
+};
+
+App.vacationRequests.uploadLeaveImage =
+async function(file) {
+
+    const path =
+        `leaveScreenshots/${
+            Date.now()
+        }.png`;
+
+    const ref =
+        firebase
+        .storage()
+        .ref(path);
+
+    await ref.put(file);
+
+    return await ref.getDownloadURL();
 
 };
 
