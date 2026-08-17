@@ -149,20 +149,20 @@ console.log("Vacation Request Data", {
     reason
 });
 
-const docRef =
-    await FirebaseService.db
-        .collection("vacationRequests")
-        .add({
+for (const date of dates) {
 
-
+    const docRef =
+        await FirebaseService.db
+            .collection("vacationRequests")
+            .add({
 
                 employeeId:
-                     App.currentUser.name,
+                    App.currentUser.email,
 
                 employeeName:
                     App.currentUser.name,
 
-                dates,
+                date,
 
                 reason,
 
@@ -176,10 +176,12 @@ const docRef =
 
             });
 
-console.log(
-    "✅ Saved to Firestore:",
-    docRef.id
-);
+    console.log(
+        "✅ Saved Request:",
+        docRef.id,
+        date
+    );
+}
 
 
 await App.leave.loadRequestedLeaves();
@@ -199,11 +201,10 @@ document
     .classList
     .remove("hidden");
 
-    console.log("✅ Email sent");
+console.log(
+    "📸 Waiting for screenshot upload"
+);
 
-    alert(
-        "✅ Vacation request submitted successfully.\n\nYour Team Lead has been notified automatically."
-    );
 
 } catch (error) {
 
@@ -253,6 +254,7 @@ document
 
 App.vacationRequests.init = function () {
 
+
 const dropzone =
     document.getElementById(
         "leave-screenshot-dropzone"
@@ -261,6 +263,276 @@ const dropzone =
 const preview =
     document.getElementById(
         "leave-screenshot-preview"
+    );
+
+document
+    .getElementById(
+        "save-leave-notifications"
+    )
+    ?.addEventListener(
+        "click",
+        async () => {
+
+            const cards =
+                document.querySelectorAll(
+                    "#leave-notification-list .request-alert-card"
+                );
+
+            for (const card of cards) {
+
+                const id =
+                    card.dataset.id;
+
+                const status =
+                    card.querySelector(
+                        ".vacation-status-select"
+                    ).value;
+
+                const requestDoc =
+                    await FirebaseService.db
+                        .collection(
+                            "vacationRequests"
+                        )
+                        .doc(id)
+                        .get();
+
+                if (!requestDoc.exists) {
+                    continue;
+                }
+
+                const requestData =
+                    requestDoc.data();
+
+                await FirebaseService.db
+                    .collection(
+                        "vacationRequests"
+                    )
+                    .doc(id)
+                    .delete();
+
+                const date =
+    requestData.date;
+
+const existingLeave =
+    await FirebaseService.db
+        .collection(
+            "leaveRequests"
+        )
+        .where(
+            "date",
+            "==",
+            date
+        )
+        .where(
+            "name",
+            "==",
+            requestData.employeeName
+        )
+        .get();
+
+if (!existingLeave.empty) {
+
+    await FirebaseService.db
+        .collection(
+            "leaveRequests"
+        )
+        .doc(
+            existingLeave.docs[0].id
+        )
+        .update({
+            status
+        });
+
+} else {
+
+    await FirebaseService.db
+        .collection(
+            "leaveRequests"
+        )
+        .add({
+
+            date,
+
+            name:
+                requestData.employeeName,
+
+            status
+
+        });
+
+}
+}
+
+
+            document
+                .getElementById(
+                    "leave-notification-modal"
+                )
+                .classList
+                .add("hidden");
+
+            await App.leave.loadLeaveRequests();
+
+            await App.leave.loadRequestedLeaves();
+
+            await App.vacationRequests
+                .loadNotificationRequests();
+
+        }
+    );
+
+document
+    .getElementById(
+        "close-leave-notifications"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "leave-notification-modal"
+                )
+                .classList
+                .add("hidden");
+
+        }
+    );
+
+document
+    .getElementById(
+        "leave-notification-btn"
+    )
+    ?.addEventListener(
+        "click",
+        App.vacationRequests
+            .openNotificationModal
+    );
+
+document
+    .getElementById(
+        "vacation-alert-save"
+    )
+    ?.addEventListener(
+        "click",
+        async () => {
+
+            const cards =
+                document.querySelectorAll(
+                    ".request-alert-card"
+                );
+
+for (const card of cards) {
+
+    const id =
+        card.dataset.id;
+
+    const status =
+        card.querySelector(
+            ".vacation-status-select"
+        ).value;
+
+    const requestDoc =
+        await FirebaseService.db
+            .collection(
+                "vacationRequests"
+            )
+            .doc(id)
+            .get();
+
+    const requestData =
+        requestDoc.data();
+
+await FirebaseService.db
+    .collection(
+        "vacationRequests"
+    )
+    .doc(id)
+    .delete();
+
+
+console.log(
+  "✅ Vacation request updated:",
+  requestData.employeeName,
+  requestData.date,
+  status
+);
+
+const date =
+    requestData.date;
+
+const existingLeave =
+    await FirebaseService.db
+        .collection("leaveRequests")
+        .where("date", "==", date)
+        .where(
+            "name",
+            "==",
+            requestData.employeeName
+        )
+        .get();
+
+if (!existingLeave.empty) {
+
+    await FirebaseService.db
+        .collection("leaveRequests")
+        .doc(
+            existingLeave.docs[0].id
+        )
+        .update({
+            status
+        });
+
+} else {
+
+    await FirebaseService.db
+        .collection("leaveRequests")
+        .add({
+
+            date,
+
+            name:
+                requestData.employeeName,
+
+            status
+
+        });
+
+}
+
+}
+
+            document
+                .getElementById(
+                    "vacation-alert-modal"
+                )
+                .classList.add(
+                    "hidden"
+                );
+
+            await App.leave.loadRequestedLeaves();
+            await App.leave.loadLeaveRequests();
+
+        }
+    );
+
+document
+    .getElementById(
+        "close-leave-success"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "leave-success-modal"
+                )
+                .classList.add(
+                    "hidden"
+                );
+
+        }
     );
 
 document.addEventListener(
@@ -612,11 +884,21 @@ document
                     .leaveScreenshot
             ) {
 
-                alert(
-                    "Please upload a screenshot first."
-                );
+const message =
+    document.getElementById(
+        "leave-screenshot-message"
+    );
 
-                return;
+message.innerHTML = `
+    ❌ Screenshot Required
+
+    <br><br>
+
+    Please upload your leave balance
+    screenshot before sending the request.
+`;
+
+return;
             }
 
             try {
@@ -644,16 +926,35 @@ document
                         imageUrl
                     );
 
-                document
-                    .getElementById(
-                        "leave-screenshot-modal"
-                    )
-                    .classList
-                    .add("hidden");
+                // Reset screenshot state
 
-                alert(
-                    "✅ Vacation request sent successfully!"
-                );
+App.vacationRequests.leaveScreenshot =
+    null;
+
+preview.src = "";
+
+preview.style.display =
+    "none";
+
+// Hide upload modal
+
+document
+    .getElementById(
+        "leave-screenshot-modal"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+// Show success modal
+
+document
+    .getElementById(
+        "leave-success-modal"
+    )
+    .classList.remove(
+        "hidden"
+    );
 
             } catch(error) {
 
@@ -724,7 +1025,7 @@ async function () {
                 <h4>${request.employeeName}</h4>
 
                 <p>
-                    ${request.dates.join(", ")}
+                    ${request.date}
                 </p>
 
                 <p>
@@ -754,33 +1055,35 @@ App.leave.loadRequestedLeaves = async function () {
 
   const snapshot = await FirebaseService.db
     .collection("vacationRequests")
-    .where("status", "==", "Requested")
     .get();
 
   App.leave.requestedLeaves = {};
 
-  snapshot.forEach(doc => {
+snapshot.forEach(doc => {
 
     const data = doc.data();
 
-    data.dates.forEach(date => {
+    const date = data.date;
 
-      if (!App.leave.requestedLeaves[date]) {
+    if (!date) return;
+
+    if (!App.leave.requestedLeaves[date]) {
 
         App.leave.requestedLeaves[date] = [];
 
-      }
+    }
 
-      App.leave.requestedLeaves[date].push({
+    App.leave.requestedLeaves[date].push({
+
+        id: doc.id,
 
         name: data.employeeName,
-        status: "Requested"
 
-      });
+        status: data.status
 
     });
 
-  });
+});
 
 console.log(
   "✅ Requested Leaves:",
@@ -788,6 +1091,9 @@ console.log(
 );
 
 App.leave.renderCalendar();
+
+await App.vacationRequests
+    .loadNotificationRequests();
 
 App.vacationRequests.showTLAlert();
 
@@ -846,19 +1152,41 @@ console.log(
         const data =
             doc.data();
 
-        list.innerHTML += `
-            <div class="request-alert-card">
+list.innerHTML += `
+    <div
+        class="request-alert-card"
+        data-id="${doc.id}"
+    >
 
-                <strong>
-                    ${data.employeeName}
-                </strong>
+        <strong>
+            ${data.employeeName}
+        </strong>
 
-                <br>
+        <div class="request-date-label">
+            📅 ${data.date || "No Date"}
+        </div>
 
-                ${data.dates.join(", ")}
+        <select
+            class="vacation-status-select"
+        >
 
-            </div>
-        `;
+            <option value="Pending">
+                Pending
+            </option>
+
+            <option value="Approved">
+                Approved
+            </option>
+
+            <option value="Denied">
+                Denied
+            </option>
+
+        </select>
+
+    </div>
+`;
+
 
     });
 
@@ -969,19 +1297,156 @@ return emailjs.send(
 App.vacationRequests.uploadLeaveImage =
 async function(file) {
 
-    const path =
-        `leaveScreenshots/${
-            Date.now()
-        }.png`;
+    const formData =
+        new FormData();
 
-    const ref =
-        firebase
-        .storage()
-        .ref(path);
+    formData.append(
+        "file",
+        file
+    );
 
-    await ref.put(file);
+    formData.append(
+        "upload_preset",
+        "profile_upload"
+    );
 
-    return await ref.getDownloadURL();
+    const response =
+        await fetch(
+            "https://api.cloudinary.com/v1_1/dbivddinj/image/upload",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+    const data =
+        await response.json();
+
+    return data.secure_url;
 
 };
+
+App.vacationRequests.loadNotificationRequests =
+async function() {
+
+    if (
+        App.currentUser?.role !==
+        "teamlead"
+    ) {
+        return;
+    }
+
+    const snapshot =
+        await FirebaseService.db
+            .collection(
+                "vacationRequests"
+            )
+            .where(
+                "status",
+                "==",
+                "Requested"
+            )
+            .get();
+
+    const btn =
+        document.getElementById(
+            "leave-notification-btn"
+        );
+
+    const count =
+        document.getElementById(
+            "leave-notification-count"
+        );
+
+if (snapshot.empty) {
+
+    btn?.classList.add("hidden");
+
+    return;
+}
+
+btn?.classList.remove("hidden");
+
+count.textContent =
+    snapshot.size;
+};
+
+App.vacationRequests.openNotificationModal =
+async function() {
+
+    const list =
+        document.getElementById(
+            "leave-notification-list"
+        );
+
+    list.innerHTML = "";
+
+    const snapshot =
+        await FirebaseService.db
+            .collection(
+                "vacationRequests"
+            )
+            .where(
+                "status",
+                "==",
+                "Requested"
+            )
+            .get();
+
+    snapshot.forEach(doc => {
+
+        const data =
+            doc.data();
+
+        list.innerHTML += `
+
+            <div
+                class="request-alert-card"
+                data-id="${doc.id}"
+            >
+
+                <strong>
+                    ${data.employeeName}
+                </strong>
+
+                <br>
+
+                📅 ${data.date}
+
+                <select
+                    class="vacation-status-select"
+                >
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Approved">
+                        Approved
+                    </option>
+
+                    <option value="Denied">
+                        Denied
+                    </option>
+
+                </select>
+
+            </div>
+
+        `;
+
+    });
+
+    document
+        .getElementById(
+            "leave-notification-modal"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+};
+
+
+
 
